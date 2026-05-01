@@ -10,6 +10,8 @@ const marginHtmlPath = join(projectRoot, 'dist/tools/margin-calculator/index.htm
 const wageHtmlPath = join(projectRoot, 'dist/tools/wage-converter/index.html');
 const quoteHtmlPath = join(projectRoot, 'dist/checklists/quote-checklist/index.html');
 const landingCopyHtmlPath = join(projectRoot, 'dist/checklists/landing-copy-checklist/index.html');
+const sitemapXmlPath = join(projectRoot, 'dist/sitemap.xml');
+const robotsTxtPath = join(projectRoot, 'dist/robots.txt');
 
 beforeAll(() => {
   execFileSync('npm', ['run', 'build'], {
@@ -202,5 +204,27 @@ describe('built landing copy checklist static HTML', () => {
     expect(html).toContain('href="/tools/margin-calculator"');
     expect(html).toContain('href="/checklists/quote-checklist"');
     expect(html).toContain('참고용 체크리스트이며 광고 성과·법률 문구·업종별 표시 의무 판단은 전문가 확인이 필요합니다.');
+  });
+});
+
+describe('SEO discovery files', () => {
+  it('publishes a sitemap and robots.txt with every launchable local route', () => {
+    const sitemap = readFileSync(sitemapXmlPath, 'utf8');
+    const robots = readFileSync(robotsTxtPath, 'utf8');
+
+    expect(sitemap).toContain('<?xml version="1.0" encoding="UTF-8"?>');
+    expect(sitemap).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+    expect(sitemap).toContain('<loc>https://mqzkim.github.io/</loc>');
+    expect(sitemap).toContain('<loc>https://mqzkim.github.io/tools/vat-calculator/</loc>');
+    expect(sitemap).toContain('<loc>https://mqzkim.github.io/tools/margin-calculator/</loc>');
+    expect(sitemap).toContain('<loc>https://mqzkim.github.io/tools/wage-converter/</loc>');
+    expect(sitemap).toContain('<loc>https://mqzkim.github.io/checklists/quote-checklist/</loc>');
+    expect(sitemap).toContain('<loc>https://mqzkim.github.io/checklists/landing-copy-checklist/</loc>');
+    expect(sitemap).toContain('<changefreq>weekly</changefreq>');
+    expect(sitemap).toContain('<priority>1.0</priority>');
+
+    expect(robots).toContain('User-agent: *');
+    expect(robots).toContain('Allow: /');
+    expect(robots).toContain('Sitemap: https://mqzkim.github.io/sitemap.xml');
   });
 });
