@@ -8,13 +8,8 @@ const homeHtmlPath = join(projectRoot, 'dist/index.html');
 const vatHtmlPath = join(projectRoot, 'dist/tools/vat-calculator/index.html');
 const marginHtmlPath = join(projectRoot, 'dist/tools/margin-calculator/index.html');
 const wageHtmlPath = join(projectRoot, 'dist/tools/wage-converter/index.html');
+const quoteHtmlPath = join(projectRoot, 'dist/checklists/quote-checklist/index.html');
 const placeholderPages = [
-  {
-    path: join(projectRoot, 'dist/checklists/quote-checklist/index.html'),
-    sourcePath: join(projectRoot, 'src/pages/checklists/quote-checklist.astro'),
-    h1: '견적서 항목 체크리스트',
-    description: '견적 금액, 작업 범위, 납기, 수정 횟수, 결제 조건처럼 빠지기 쉬운 항목을 제출 전 점검하는 체크리스트를 준비하고 있습니다.',
-  },
   {
     path: join(projectRoot, 'dist/checklists/landing-copy-checklist/index.html'),
     sourcePath: join(projectRoot, 'src/pages/checklists/landing-copy-checklist.astro'),
@@ -45,9 +40,11 @@ describe('built home static HTML', () => {
     expect(html).toContain('마진율 계산기 바로 쓰기');
     expect(html).toContain('href="/tools/wage-converter"');
     expect(html).toContain('인건비 계산기 바로 쓰기');
+    expect(html).toContain('견적서 체크리스트 바로 쓰기');
     expect(html).toContain('사용 가능/준비 중인 도구');
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?마진율·원가·판매가 계산기/);
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?인건비\/시급\/월급 환산 계산기/);
+    expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?견적서 항목 체크리스트/);
     expect(html).toContain('마진율·원가·판매가 계산기');
     expect(html).toContain('인건비/시급/월급 환산 계산기');
     expect(html).toContain('견적서 항목 체크리스트');
@@ -149,6 +146,31 @@ describe('built wage converter static HTML', () => {
     expect(html).toContain('href="/tools/vat-calculator"');
     expect(html).toContain('href="/tools/margin-calculator"');
     expect(html).toContain('참고용 도구이며 노무·세무·법률 판단은 전문가 확인이 필요합니다.');
+  });
+});
+
+describe('built quote checklist static HTML', () => {
+  it('replaces the preparation page with a launchable quote checklist', () => {
+    const html = readFileSync(quoteHtmlPath, 'utf8');
+
+    expect(html).toContain('lang="ko"');
+    expect(html).toContain('<title>견적서 체크리스트 | 금액·범위·납기 제출 전 점검</title>');
+    expect(html).toMatch(/<h1\b[^>]*>견적서 항목 체크리스트<\/h1>/);
+    expect(html).toContain('견적서를 보내기 전 3분 안에 빠진 조건을 확인하세요.');
+    expect(html).toContain('id="quote-checklist"');
+    expect(html).toContain('id="quote-scope"');
+    expect(html).toContain('id="quote-price"');
+    expect(html).toContain('id="quote-schedule"');
+    expect(html).toContain('id="quote-payment"');
+    expect(html).toContain('id="quote-revision"');
+    expect(html).toContain('id="quote-copy-template"');
+    expect(html).toContain('복사해서 견적서 메모에 붙여넣기');
+    expect(html).toContain('작업 범위와 제외 범위를 함께 적었나요?');
+    expect(html).toContain('부가세 포함/별도 여부를 표시했나요?');
+    expect(html).toContain('href="/tools/vat-calculator"');
+    expect(html).toContain('href="/tools/margin-calculator"');
+    expect(html).toContain('href="/tools/wage-converter"');
+    expect(html).toContain('참고용 체크리스트이며 계약·세무·법률 판단은 전문가 확인이 필요합니다.');
   });
 });
 
