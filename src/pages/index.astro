@@ -64,6 +64,8 @@ const websiteStructuredData = {
   },
 };
 
+const toAbsoluteUrl = (path: string) => new URL(`${path}/`, canonicalUrl).href;
+
 const itemListStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -75,7 +77,7 @@ const itemListStructuredData = {
     position: index + 1,
     name: tool.title,
     description: tool.description,
-    url: tool.href,
+    url: toAbsoluteUrl(tool.href),
   })),
 };
 

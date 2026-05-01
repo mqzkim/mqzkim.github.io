@@ -54,8 +54,8 @@ describe('built home static HTML', () => {
     expect(html).toContain('"inLanguage":"ko-KR"');
     expect(html).toContain('"@type":"ItemList"');
     expect(html).toContain('"numberOfItems":5');
-    expect(html).toContain('"url":"/tools/vat-calculator"');
-    expect(html).toContain('"url":"/checklists/landing-copy-checklist"');
+    expect(html).toContain('"url":"https://mqzkim.github.io/tools/vat-calculator/"');
+    expect(html).toContain('"url":"https://mqzkim.github.io/checklists/landing-copy-checklist/"');
     expect(html).toContain('id="home-faq"');
     expect(html).toContain('자주 묻는 질문');
     expect(html).toContain('계산 결과를 저장하나요?');
