@@ -29,6 +29,8 @@ describe('built home static HTML', () => {
     expect(html).toContain('lang="ko"');
     expect(html).toContain('<title>소상공인 무료 계산기와 체크리스트</title>');
     expect(html).toContain('rel="canonical" href="https://mqzkim.github.io/"');
+    expect(html).toContain('rel="alternate" hreflang="ko-KR" href="https://mqzkim.github.io/"');
+    expect(html).toContain('rel="alternate" hreflang="x-default" href="https://mqzkim.github.io/"');
     expect(html).toContain('property="og:title" content="소상공인 무료 계산기와 체크리스트"');
     expect(html).toContain('property="og:description" content="소상공인을 위한 무료 계산기와 체크리스트. 부가세, 마진율, 인건비 계산과 견적서·랜딩 문구 점검을 빠르게 시작하세요."');
     expect(html).toContain('property="og:url" content="https://mqzkim.github.io/"');
@@ -233,6 +235,8 @@ describe('individual page social metadata', () => {
       const html = readFileSync(page.path, 'utf8');
 
       expect(html).toContain(`rel="canonical" href="${page.url}"`);
+      expect(html).toContain(`rel="alternate" hreflang="ko-KR" href="${page.url}"`);
+      expect(html).toContain(`rel="alternate" hreflang="x-default" href="${page.url}"`);
       expect(html).toContain(`property="og:title" content="${page.title}"`);
       expect(html).toContain(`property="og:url" content="${page.url}"`);
       expect(html).toContain('property="og:description"');
