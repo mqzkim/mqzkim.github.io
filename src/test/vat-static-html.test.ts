@@ -29,6 +29,7 @@ describe('built home static HTML', () => {
     expect(html).toContain('lang="ko"');
     expect(html).toContain('<title>소상공인 무료 계산기와 체크리스트</title>');
     expect(html).toContain('rel="canonical" href="https://mqzkim.github.io/"');
+    expect(html).toContain('name="robots" content="index, follow"');
     expect(html).toContain('rel="alternate" hreflang="ko-KR" href="https://mqzkim.github.io/"');
     expect(html).toContain('rel="alternate" hreflang="x-default" href="https://mqzkim.github.io/"');
     expect(html).toContain('property="og:title" content="소상공인 무료 계산기와 체크리스트"');
@@ -235,6 +236,7 @@ describe('individual page social metadata', () => {
       const html = readFileSync(page.path, 'utf8');
 
       expect(html).toContain(`rel="canonical" href="${page.url}"`);
+      expect(html).toContain('name="robots" content="index, follow"');
       expect(html).toContain(`rel="alternate" hreflang="ko-KR" href="${page.url}"`);
       expect(html).toContain(`rel="alternate" hreflang="x-default" href="${page.url}"`);
       expect(html).toContain(`property="og:title" content="${page.title}"`);
