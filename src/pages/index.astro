@@ -31,6 +31,21 @@ const tools = [
     status: '사용 가능',
   },
 ];
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: '소상공인 무료 계산기와 체크리스트',
+  description: '소상공인을 위한 무료 계산기와 체크리스트 모음',
+  numberOfItems: tools.length,
+  itemListElement: tools.map((tool, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: tool.title,
+    description: tool.description,
+    url: tool.href,
+  })),
+};
 ---
 
 <html lang="ko">
@@ -45,6 +60,7 @@ const tools = [
       content="소상공인을 위한 무료 계산기와 체크리스트. 부가세, 마진율, 인건비 계산과 견적서·랜딩 문구 점검을 빠르게 시작하세요."
     />
     <title>소상공인 무료 계산기와 체크리스트</title>
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     <style>
       :root {
         color-scheme: light;

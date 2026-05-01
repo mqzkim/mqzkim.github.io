@@ -36,6 +36,11 @@ describe('built home static HTML', () => {
     expect(html).toContain('견적서 체크리스트 바로 쓰기');
     expect(html).toContain('랜딩 문구 체크리스트 바로 쓰기');
     expect(html).toContain('사용 가능/준비 중인 도구');
+    expect(html).toContain('type="application/ld+json"');
+    expect(html).toContain('"@type":"ItemList"');
+    expect(html).toContain('"numberOfItems":5');
+    expect(html).toContain('"url":"/tools/vat-calculator"');
+    expect(html).toContain('"url":"/checklists/landing-copy-checklist"');
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?마진율·원가·판매가 계산기/);
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?인건비\/시급\/월급 환산 계산기/);
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?견적서 항목 체크리스트/);
