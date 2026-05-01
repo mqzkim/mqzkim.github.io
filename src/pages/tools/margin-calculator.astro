@@ -12,6 +12,7 @@ const exampleInput = {
 const example = calculateMargin(exampleInput);
 const title = '마진율 계산기 | 원가·수수료·배송비 반영 순이익 계산';
 const description = '판매가, 원가, 수수료, 배송비를 입력해 예상 이익과 마진율, 손익분기 판매가를 빠르게 확인하세요.';
+const canonicalUrl = 'https://mqzkim.github.io/tools/margin-calculator/';
 const formatPercent = (value: number | null) => value === null ? '계산 제외' : `${value.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
 ---
 
@@ -22,6 +23,7 @@ const formatPercent = (value: number | null) => value === null ? '계산 제외'
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
     <style>

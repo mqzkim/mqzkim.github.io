@@ -1,6 +1,7 @@
 ---
 const title = '랜딩 문구 체크리스트 | 가치제안·혜택·CTA 점검';
 const description = '상품 소개, 고객 문제, 핵심 혜택, 신뢰 요소, CTA 문구가 빠지지 않았는지 랜딩 공개 전 빠르게 확인하세요.';
+const canonicalUrl = 'https://mqzkim.github.io/checklists/landing-copy-checklist/';
 const sections = [
   {
     id: 'landing-copy-value',
@@ -63,6 +64,7 @@ const templateLines = [
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
     <style>

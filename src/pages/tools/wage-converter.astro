@@ -11,6 +11,7 @@ const exampleInput = {
 const example = calculateWageConversion(exampleInput);
 const title = '인건비 계산기 | 시급·일급·주급·월급 환산';
 const description = '시급, 근무시간, 근무일을 입력해 일급·주급·월급·연봉 환산액과 실질 시급을 빠르게 확인하세요.';
+const canonicalUrl = 'https://mqzkim.github.io/tools/wage-converter/';
 const formatHours = (value: number) => value.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
 ---
 
@@ -21,6 +22,7 @@ const formatHours = (value: number) => value.toLocaleString('ko-KR', { maximumFr
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
     <style>

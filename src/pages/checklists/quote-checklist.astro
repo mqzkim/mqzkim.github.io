@@ -1,6 +1,7 @@
 ---
 const title = '견적서 체크리스트 | 금액·범위·납기 제출 전 점검';
 const description = '견적서를 보내기 전 작업 범위, 금액, 납기, 결제 조건, 수정 범위를 3분 안에 점검하는 무료 체크리스트입니다.';
+const canonicalUrl = 'https://mqzkim.github.io/checklists/quote-checklist/';
 
 const checklist = [
   {
@@ -70,6 +71,7 @@ const copyTemplate = `견적 전 점검
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
     <style>
