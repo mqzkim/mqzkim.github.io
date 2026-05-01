@@ -166,8 +166,7 @@ const formatPercent = (value: number | null) => value === null ? '계산 제외'
       </footer>
     </div>
     <script>
-      import { calculateMargin } from '../../lib/margin';
-      import { formatKRW } from '../../lib/format';
+      import { buildMarginViewModel } from '../../lib/margin-interaction';
 
       const fields = {
         sellingPrice: document.querySelector<HTMLInputElement>('#margin-selling-price'),
@@ -191,12 +190,6 @@ const formatPercent = (value: number | null) => value === null ? '계산 제외'
       };
       let latestCopyText = '';
 
-      function parseNumber(value: string): number {
-        return Number(value.replaceAll(',', '').trim());
-      }
-      function formatPercent(value: number | null): string {
-        return value === null ? '계산 제외' : `${value.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
-      }
       function setText(target: HTMLElement | null, value: string): void {
         if (target) target.textContent = value;
       }
@@ -208,21 +201,21 @@ const formatPercent = (value: number | null) => value === null ? '계산 제외'
         if (!fields.sellingPrice || !fields.productCost || !fields.feePercent || !fields.shippingCost || !fields.extraCost) return;
         clearStatus();
         try {
-          const result = calculateMargin({
-            sellingPrice: parseNumber(fields.sellingPrice.value),
-            productCost: parseNumber(fields.productCost.value),
-            feePercent: parseNumber(fields.feePercent.value),
-            shippingCost: parseNumber(fields.shippingCost.value || '0'),
-            extraCost: parseNumber(fields.extraCost.value || '0'),
+          const viewModel = buildMarginViewModel({
+            sellingPrice: fields.sellingPrice.value,
+            productCost: fields.productCost.value,
+            feePercent: fields.feePercent.value,
+            shippingCost: fields.shippingCost.value,
+            extraCost: fields.extraCost.value,
           });
-          latestCopyText = result.copyText;
-          setText(resultTargets.feeAmount, formatKRW(result.feeAmount));
-          setText(resultTargets.totalCost, formatKRW(result.totalCost));
-          setText(resultTargets.profitAmount, formatKRW(result.profitAmount));
-          setText(resultTargets.marginRatePercent, formatPercent(result.marginRatePercent));
-          setText(resultTargets.markupRatePercent, formatPercent(result.markupRatePercent));
-          setText(resultTargets.breakEvenPrice, formatKRW(result.breakEvenPrice));
-          setText(resultTargets.formulaText, result.formulaText);
+          latestCopyText = viewModel.copyText;
+          setText(resultTargets.feeAmount, viewModel.feeAmount);
+          setText(resultTargets.totalCost, viewModel.totalCost);
+          setText(resultTargets.profitAmount, viewModel.profitAmount);
+          setText(resultTargets.marginRatePercent, viewModel.marginRatePercent);
+          setText(resultTargets.markupRatePercent, viewModel.markupRatePercent);
+          setText(resultTargets.breakEvenPrice, viewModel.breakEvenPrice);
+          setText(resultTargets.formulaText, viewModel.formulaText);
         } catch (error) {
           latestCopyText = '';
           setText(errorBox, error instanceof Error ? error.message : '계산 중 오류가 발생했습니다.');
