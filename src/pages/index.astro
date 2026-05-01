@@ -1,0 +1,225 @@
+---
+const tools = [
+  {
+    title: '부가세 포함/제외 계산기',
+    description: '공급가액에서 총액을 계산하거나, 부가세 포함 금액을 공급가액과 세액으로 나눕니다.',
+    href: '/tools/vat-calculator',
+    status: '사용 가능',
+  },
+  {
+    title: '마진율·원가·판매가 계산기',
+    description: '원가, 판매가, 수수료를 바탕으로 실제 남는 금액을 확인합니다.',
+    href: '/tools/margin-calculator',
+    status: '준비 중',
+  },
+  {
+    title: '인건비/시급/월급 환산 계산기',
+    description: '시급, 근무시간, 월급을 서로 환산해 기본 인건비 감각을 잡습니다.',
+    href: '/tools/wage-converter',
+    status: '준비 중',
+  },
+  {
+    title: '견적서 항목 체크리스트',
+    description: '견적서에 빠지기 쉬운 항목과 조건을 제출 전 점검합니다.',
+    href: '/checklists/quote-checklist',
+    status: '준비 중',
+  },
+  {
+    title: '사업자용 랜딩 문구 템플릿 체크리스트',
+    description: '상품 소개, 혜택, 신뢰 요소, CTA가 빠지지 않았는지 확인합니다.',
+    href: '/checklists/landing-copy-checklist',
+    status: '준비 중',
+  },
+];
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta
+      name="description"
+      content="소상공인을 위한 무료 계산기와 체크리스트. 부가세, 마진율, 인건비 계산과 견적서·랜딩 문구 점검을 빠르게 시작하세요."
+    />
+    <title>소상공인 무료 계산기와 체크리스트</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Pretendard,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background: #f7f9fc;
+        color: #172033;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      main {
+        width: min(1080px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 56px 0 72px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 24px;
+        padding: 40px;
+        border: 1px solid #dce6f3;
+        border-radius: 28px;
+        background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
+        box-shadow: 0 22px 70px rgba(40, 70, 120, 0.12);
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: #1b66d2;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin: 0;
+        font-size: clamp(2.25rem, 6vw, 4.5rem);
+        line-height: 1.05;
+        letter-spacing: -0.05em;
+      }
+
+      .lead {
+        max-width: 760px;
+        margin: 0;
+        color: #526071;
+        font-size: 1.18rem;
+        line-height: 1.8;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 20px;
+        border-radius: 999px;
+        background: #1b66d2;
+        color: #fff;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .secondary-link {
+        color: #1b66d2;
+        font-weight: 700;
+      }
+
+      section {
+        margin-top: 40px;
+      }
+
+      h2 {
+        margin: 0 0 16px;
+        font-size: 1.6rem;
+      }
+
+      .tool-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .tool-card {
+        min-height: 190px;
+        padding: 22px;
+        border: 1px solid #dce6f3;
+        border-radius: 20px;
+        background: #fff;
+      }
+
+      .tool-card a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .tool-card h3 {
+        margin: 8px 0 10px;
+        font-size: 1.12rem;
+      }
+
+      .tool-card p {
+        margin: 0;
+        color: #647284;
+        line-height: 1.65;
+      }
+
+      .badge {
+        display: inline-flex;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #edf4ff;
+        color: #1b66d2;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+
+      .notice {
+        margin-top: 28px;
+        padding: 18px 20px;
+        border-left: 4px solid #f59e0b;
+        border-radius: 14px;
+        background: #fff8eb;
+        color: #6b4a12;
+        line-height: 1.7;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero" aria-labelledby="home-title">
+        <p class="eyebrow">무료 웹 도구 MVP</p>
+        <h1 id="home-title">소상공인을 위한 무료 계산기와 체크리스트</h1>
+        <p class="lead">
+          부가세, 마진율, 인건비처럼 자주 확인하는 숫자를 빠르게 계산하고 견적·랜딩 문구 체크리스트로 누락을 줄입니다.
+        </p>
+        <div class="actions">
+          <a class="button" href="/tools/vat-calculator">부가세 계산기 바로 쓰기</a>
+          <a class="secondary-link" href="#tools">준비 중인 도구 보기</a>
+        </div>
+      </section>
+
+      <section id="tools" aria-labelledby="tools-title">
+        <h2 id="tools-title">준비 중인 도구</h2>
+        <ul class="tool-grid">
+          {tools.map((tool) => (
+            <li class="tool-card">
+              <span class="badge">{tool.status}</span>
+              <h3>
+                <a href={tool.href}>{tool.title}</a>
+              </h3>
+              <p>{tool.description}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <p class="notice">
+        참고용 도구이며 세무·노무·법률 판단은 전문가 확인이 필요합니다. 입력한 값은 현재 정적 MVP에서 저장하지 않습니다.
+      </p>
+    </main>
+  </body>
+</html>

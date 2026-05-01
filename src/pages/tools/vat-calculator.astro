@@ -1,0 +1,500 @@
+---
+import { calculateVat } from '../../lib/vat';
+import { formatKRW } from '../../lib/format';
+
+const example = calculateVat({
+  mode: 'exclusive_to_total',
+  amount: 100_000,
+  ratePercent: 10,
+  rounding: 'round',
+});
+
+const title = '부가세 계산기 | 공급가액·세액·총액 빠른 계산';
+const description = '공급가액에서 부가세 포함 금액을 계산하거나, 총액에서 공급가액과 부가세액을 빠르게 나눠보세요. 기본 세율 10%, 반올림 방식 선택 가능.';
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, Pretendard, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f7f8fb;
+        color: #162033;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at top left, rgba(80, 126, 255, 0.16), transparent 34rem),
+          linear-gradient(180deg, #fbfcff 0%, #f7f8fb 46%, #eef2f8 100%);
+      }
+
+      a { color: #2854c5; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      .shell {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 24px 0;
+      }
+
+      .brand {
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.94rem;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+        gap: 28px;
+        align-items: stretch;
+        padding: 48px 0 28px;
+      }
+
+      .eyebrow {
+        color: #4b63a8;
+        font-weight: 700;
+        margin: 0 0 10px;
+      }
+
+      h1 {
+        font-size: clamp(2.3rem, 6vw, 4.8rem);
+        line-height: 0.96;
+        letter-spacing: -0.07em;
+        margin: 0 0 20px;
+      }
+
+      .lead {
+        color: #45526a;
+        font-size: clamp(1.05rem, 2.2vw, 1.26rem);
+        line-height: 1.75;
+        margin: 0;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+        gap: 24px;
+        align-items: start;
+        padding-bottom: 64px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid rgba(91, 111, 153, 0.18);
+        border-radius: 28px;
+        box-shadow: 0 24px 70px rgba(28, 42, 72, 0.11);
+        padding: 28px;
+      }
+
+      .card h2,
+      .card h3 {
+        margin-top: 0;
+        letter-spacing: -0.035em;
+      }
+
+      .calculator-card {
+        display: grid;
+        gap: 20px;
+      }
+
+      .segmented,
+      .radio-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .pill {
+        border: 1px solid #d7deed;
+        background: #ffffff;
+        border-radius: 999px;
+        padding: 10px 14px;
+        font: inherit;
+        font-weight: 700;
+        color: #34415d;
+        cursor: pointer;
+      }
+
+      .pill.active,
+      .pill[aria-pressed="true"] {
+        background: #2854c5;
+        color: #fff;
+        border-color: #2854c5;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        font-weight: 700;
+        color: #2d3951;
+      }
+
+      input,
+      select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d7deed;
+        border-radius: 16px;
+        padding: 14px 16px;
+        font: inherit;
+        background: #fff;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 16px;
+        background: #162033;
+        color: white;
+        padding: 15px 18px;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .button.secondary {
+        background: #2854c5;
+      }
+
+      .feedback {
+        border-radius: 16px;
+        padding: 12px 14px;
+        line-height: 1.55;
+      }
+
+      .feedback:empty {
+        display: none;
+      }
+
+      .feedback.error {
+        background: #fff1f1;
+        color: #a12b2b;
+      }
+
+      .feedback.success {
+        background: #eefbf2;
+        color: #23663b;
+      }
+
+      .muted {
+        color: #68758c;
+        line-height: 1.7;
+      }
+
+      .result-list {
+        display: grid;
+        gap: 12px;
+        margin: 20px 0;
+      }
+
+      .result-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        border-radius: 18px;
+        background: #f4f7fc;
+        padding: 16px;
+      }
+
+      .result-item strong {
+        font-size: 1.18rem;
+      }
+
+      .notice {
+        border-left: 4px solid #f0a43c;
+        background: #fff8ed;
+        border-radius: 18px;
+        padding: 16px 18px;
+        color: #5e4520;
+        line-height: 1.65;
+      }
+
+      .content-stack {
+        display: grid;
+        gap: 20px;
+      }
+
+      .examples {
+        display: grid;
+        gap: 10px;
+        padding-left: 20px;
+      }
+
+      .related {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .related a {
+        border: 1px solid #dce3f1;
+        border-radius: 18px;
+        background: #fff;
+        padding: 16px;
+        font-weight: 800;
+      }
+
+      footer {
+        padding: 32px 0 48px;
+        color: #68758c;
+      }
+
+      @media (max-width: 840px) {
+        header,
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        header { align-items: flex-start; flex-direction: column; }
+        .related { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="/">사업자 도구 모음</a>
+        <nav aria-label="주요 도구">
+          <a href="/tools/vat-calculator">부가세 계산기</a>
+          <a href="/tools/margin-calculator">마진율 계산기</a>
+          <a href="/checklists/quote-checklist">견적서 체크리스트</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <p class="eyebrow">무료 계산 도구 · 기본 세율 10%</p>
+            <h1>부가세 포함/제외 계산기</h1>
+            <p class="lead">
+              공급가액, 부가세액, 총액을 10초 안에 확인하세요. 부가세 별도 금액에서 총액을 계산하거나,
+              부가세 포함 총액에서 공급가액과 세액을 나눠볼 수 있습니다.
+            </p>
+          </div>
+          <aside class="card notice" aria-label="참고용 고지">
+            이 계산기는 빠른 확인을 위한 참고용 도구입니다. 실제 신고, 계약, 세금계산서 발행,
+            업종별 과세 판단은 세무 전문가 또는 공식 안내를 확인하세요.
+          </aside>
+        </section>
+
+        <section class="grid" aria-label="부가세 계산기">
+          <div class="card calculator-card">
+            <h2>계산 입력</h2>
+            <div>
+              <p class="muted">계산 모드</p>
+              <div class="segmented" role="group" aria-label="계산 모드">
+                <button class="pill active" type="button" data-mode-button="exclusive_to_total" aria-pressed="true">부가세 별도 → 포함 금액 계산</button>
+                <button class="pill" type="button" data-mode-button="inclusive_to_supply" aria-pressed="false">부가세 포함 → 공급가액/세액 나누기</button>
+              </div>
+            </div>
+
+            <label>
+              금액
+              <input id="vat-amount" inputmode="numeric" placeholder="예: 100000" value="100000" aria-describedby="amount-help" />
+              <span id="amount-help" class="muted">쉼표를 넣어도 자동으로 계산합니다. 예: 100,000</span>
+            </label>
+
+            <label>
+              부가세율(%)
+              <input id="vat-rate" inputmode="decimal" value="10" />
+            </label>
+
+            <label>
+              반올림 방식
+              <select id="vat-rounding">
+                <option value="round" selected>원 단위 반올림</option>
+                <option value="floor">원 단위 버림</option>
+                <option value="ceil">원 단위 올림</option>
+              </select>
+            </label>
+
+            <button class="button" id="vat-calculate" type="button">계산 결과 확인</button>
+            <p id="vat-error" class="feedback error" role="alert"></p>
+            <p class="muted">입력값은 외부로 저장하거나 전송하지 않고 브라우저 안에서만 계산합니다.</p>
+          </div>
+
+          <aside class="card" id="vat-result" aria-labelledby="vat-result-title">
+            <h2 id="vat-result-title">결과 예시</h2>
+            <p class="muted">공급가액 100,000원, 세율 10%, 반올림 기준</p>
+            <div class="result-list">
+              <div class="result-item"><span>공급가액</span><strong data-result="supplyAmount">{formatKRW(example.supplyAmount)}</strong></div>
+              <div class="result-item"><span>부가세액</span><strong data-result="vatAmount">{formatKRW(example.vatAmount)}</strong></div>
+              <div class="result-item"><span>총액</span><strong data-result="totalAmount">{formatKRW(example.totalAmount)}</strong></div>
+              <div class="result-item"><span>적용 세율</span><strong data-result="ratePercent">{example.ratePercent}%</strong></div>
+            </div>
+            <p class="muted">계산식: <span data-result="formulaText">{example.formulaText}</span></p>
+            <button class="button secondary" id="vat-copy" type="button" aria-describedby="vat-copy-status">결과 복사</button>
+            <p id="vat-copy-status" class="feedback success" aria-live="polite"></p>
+          </aside>
+        </section>
+
+        <section class="grid">
+          <div class="content-stack">
+            <article class="card">
+              <h2>부가세 별도 금액 계산법</h2>
+              <p class="muted">입력한 공급가액에 세율을 곱해 부가세액을 구하고, 공급가액과 부가세액을 더해 총액을 계산합니다.</p>
+              <code>총액 = 공급가액 + 원 단위 반올림(공급가액 × 세율)</code>
+            </article>
+
+            <article class="card">
+              <h2>부가세 포함 금액에서 공급가액 나누는 법</h2>
+              <p class="muted">총액을 <code>1 + 세율</code>로 나눠 공급가액을 역산하고, 부가세액은 총액에서 공급가액을 뺀 값으로 맞춥니다.</p>
+              <code>공급가액 = 총액 ÷ (1 + 세율), 부가세액 = 총액 - 공급가액</code>
+            </article>
+          </div>
+
+          <aside class="card">
+            <h2>대표 검산 케이스</h2>
+            <ol class="examples">
+              <li>공급가액 100,000원 → 부가세 10,000원, 총액 110,000원</li>
+              <li>총액 110,000원 → 공급가액 100,000원, 부가세 10,000원</li>
+              <li>공급가액 99,999원 → 반올림 부가세 10,000원, 총액 109,999원</li>
+            </ol>
+          </aside>
+        </section>
+
+        <section class="card" aria-label="관련 도구">
+          <h2>관련 도구</h2>
+          <div class="related">
+            <a href="/tools/margin-calculator">마진율 계산기로 실제 남는 금액 확인하기</a>
+            <a href="/checklists/quote-checklist">견적서 체크리스트로 항목 누락 확인하기</a>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>사업자 도구 모음 MVP · 외부 저장 없이 브라우저에서 계산하는 무료 도구를 목표로 합니다.</p>
+      </footer>
+    </div>
+    <script>
+      import { buildVatViewModel, parseVatFormInput } from '../../lib/vat-interaction';
+      import { calculateVat } from '../../lib/vat';
+
+      type VatMode = 'exclusive_to_total' | 'inclusive_to_supply';
+
+      const amountInput = document.querySelector<HTMLInputElement>('#vat-amount');
+      const rateInput = document.querySelector<HTMLInputElement>('#vat-rate');
+      const roundingSelect = document.querySelector<HTMLSelectElement>('#vat-rounding');
+      const calculateButton = document.querySelector<HTMLButtonElement>('#vat-calculate');
+      const copyButton = document.querySelector<HTMLButtonElement>('#vat-copy');
+      const errorBox = document.querySelector<HTMLElement>('#vat-error');
+      const copyStatus = document.querySelector<HTMLElement>('#vat-copy-status');
+      const modeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-mode-button]'));
+      const resultTargets = {
+        supplyAmount: document.querySelector<HTMLElement>('[data-result="supplyAmount"]'),
+        vatAmount: document.querySelector<HTMLElement>('[data-result="vatAmount"]'),
+        totalAmount: document.querySelector<HTMLElement>('[data-result="totalAmount"]'),
+        ratePercent: document.querySelector<HTMLElement>('[data-result="ratePercent"]'),
+        formulaText: document.querySelector<HTMLElement>('[data-result="formulaText"]'),
+      };
+
+      let selectedMode: VatMode = 'exclusive_to_total';
+      let latestCopyText = '';
+
+      function setText(target: HTMLElement | null, value: string): void {
+        if (target) target.textContent = value;
+      }
+
+      function setMode(mode: VatMode): void {
+        selectedMode = mode;
+        for (const button of modeButtons) {
+          const isActive = button.dataset.modeButton === mode;
+          button.classList.toggle('active', isActive);
+          button.setAttribute('aria-pressed', String(isActive));
+        }
+        updateVatResult();
+      }
+
+      function clearStatus(): void {
+        setText(errorBox, '');
+        setText(copyStatus, '');
+      }
+
+      function updateVatResult(): void {
+        if (!amountInput || !rateInput || !roundingSelect) return;
+        clearStatus();
+
+        try {
+          const result = calculateVat(
+            parseVatFormInput({
+              mode: selectedMode,
+              amount: amountInput.value,
+              ratePercent: rateInput.value,
+              rounding: roundingSelect.value,
+            }),
+          );
+          const view = buildVatViewModel(result);
+          latestCopyText = view.copyText;
+          setText(resultTargets.supplyAmount, view.supplyAmountText);
+          setText(resultTargets.vatAmount, view.vatAmountText);
+          setText(resultTargets.totalAmount, view.totalAmountText);
+          setText(resultTargets.ratePercent, view.ratePercentText);
+          setText(resultTargets.formulaText, view.formulaText);
+        } catch (error) {
+          latestCopyText = '';
+          setText(errorBox, error instanceof Error ? error.message : '계산 중 오류가 발생했습니다.');
+        }
+      }
+
+      async function copyVatResult(): Promise<void> {
+        if (!latestCopyText) {
+          updateVatResult();
+        }
+        if (!latestCopyText) return;
+
+        if (!navigator.clipboard?.writeText) {
+          setText(copyStatus, '이 브라우저에서는 자동 복사를 지원하지 않습니다. 결과 문구를 직접 선택해 복사해 주세요.');
+          return;
+        }
+
+        try {
+          await navigator.clipboard.writeText(latestCopyText);
+          setText(copyStatus, '계산 결과를 클립보드에 복사했습니다.');
+        } catch {
+          setText(copyStatus, '복사 권한을 사용할 수 없습니다. 결과 문구를 직접 선택해 복사해 주세요.');
+        }
+      }
+
+      for (const button of modeButtons) {
+        button.addEventListener('click', () => {
+          const mode = button.dataset.modeButton;
+          if (mode === 'exclusive_to_total' || mode === 'inclusive_to_supply') {
+            setMode(mode);
+          }
+        });
+      }
+
+      amountInput?.addEventListener('input', updateVatResult);
+      rateInput?.addEventListener('input', updateVatResult);
+      roundingSelect?.addEventListener('change', updateVatResult);
+      calculateButton?.addEventListener('click', updateVatResult);
+      copyButton?.addEventListener('click', () => void copyVatResult());
+      updateVatResult();
+    </script>
+  </body>
+</html>

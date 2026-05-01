@@ -1,0 +1,251 @@
+---
+import { calculateMargin } from '../../lib/margin';
+import { formatKRW } from '../../lib/format';
+
+const exampleInput = {
+  sellingPrice: 30_000,
+  productCost: 12_000,
+  feePercent: 3.5,
+  shippingCost: 3_000,
+  extraCost: 1_000,
+};
+const example = calculateMargin(exampleInput);
+const title = '마진율 계산기 | 원가·수수료·배송비 반영 순이익 계산';
+const description = '판매가, 원가, 수수료, 배송비를 입력해 예상 이익과 마진율, 손익분기 판매가를 빠르게 확인하세요.';
+const formatPercent = (value: number | null) => value === null ? '계산 제외' : `${value.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, Pretendard, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f7f8fb;
+        color: #162033;
+      }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at top left, rgba(44, 172, 117, 0.18), transparent 34rem),
+          linear-gradient(180deg, #fbfffd 0%, #f7f8fb 46%, #eef4f0 100%);
+      }
+      a { color: #147a4d; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+      header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0; }
+      .brand { font-weight: 800; letter-spacing: -0.03em; }
+      nav { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.94rem; }
+      .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr); gap: 28px; align-items: stretch; padding: 48px 0 28px; }
+      .eyebrow { color: #147a4d; font-weight: 800; margin: 0 0 10px; }
+      h1 { font-size: clamp(2.25rem, 6vw, 4.6rem); line-height: 0.98; letter-spacing: -0.07em; margin: 0 0 20px; }
+      .lead { color: #45526a; font-size: clamp(1.05rem, 2.2vw, 1.26rem); line-height: 1.75; margin: 0; }
+      .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 420px); gap: 24px; align-items: start; padding-bottom: 64px; }
+      .card { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(70, 126, 98, 0.18); border-radius: 28px; box-shadow: 0 24px 70px rgba(28, 72, 48, 0.11); padding: 28px; }
+      .card h2, .card h3 { margin-top: 0; letter-spacing: -0.035em; }
+      .calculator-card { display: grid; gap: 18px; }
+      label { display: grid; gap: 8px; font-weight: 700; color: #2d3951; }
+      input { width: 100%; box-sizing: border-box; border: 1px solid #d7e8de; border-radius: 16px; padding: 14px 16px; font: inherit; background: #fff; }
+      .button { display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 16px; background: #173225; color: white; padding: 15px 18px; font: inherit; font-weight: 800; cursor: pointer; }
+      .button.secondary { background: #147a4d; }
+      .feedback { border-radius: 16px; padding: 12px 14px; line-height: 1.55; }
+      .feedback:empty { display: none; }
+      .feedback.error { background: #fff1f1; color: #a12b2b; }
+      .feedback.success { background: #eefbf2; color: #23663b; }
+      .muted { color: #68758c; line-height: 1.7; }
+      .result-list { display: grid; gap: 12px; margin: 20px 0; }
+      .result-item { display: flex; justify-content: space-between; gap: 16px; border-radius: 18px; background: #f3faf6; padding: 16px; }
+      .result-item strong { font-size: 1.18rem; text-align: right; }
+      .notice { border-left: 4px solid #f0a43c; background: #fff8ed; border-radius: 18px; padding: 16px 18px; color: #5e4520; line-height: 1.65; }
+      .content-stack { display: grid; gap: 20px; }
+      .examples { display: grid; gap: 10px; padding-left: 20px; }
+      .related { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .related a { border: 1px solid #dce8e1; border-radius: 18px; background: #fff; padding: 16px; font-weight: 800; }
+      footer { padding: 32px 0 48px; color: #68758c; }
+      @media (max-width: 840px) {
+        header, .hero, .grid { grid-template-columns: 1fr; }
+        header { align-items: flex-start; flex-direction: column; }
+        .related { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="/">사업자 도구 모음</a>
+        <nav aria-label="주요 도구">
+          <a href="/tools/vat-calculator">부가세 계산기</a>
+          <a href="/tools/margin-calculator">마진율 계산기</a>
+          <a href="/checklists/quote-checklist">견적서 체크리스트</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <p class="eyebrow">무료 계산 도구 · 쇼핑몰/서비스 가격 검산</p>
+            <h1>마진율·원가·판매가 계산기</h1>
+            <p class="lead">판매가에서 실제 남는 금액을 10초 안에 확인하세요. 원가, 플랫폼 수수료, 배송·포장비, 기타 비용을 반영해 예상 이익과 손익분기 판매가를 계산합니다.</p>
+          </div>
+          <aside class="card notice" aria-label="참고용 고지">
+            이 계산기는 빠른 확인을 위한 참고용 도구입니다. 실제 정산, 세금, 반품, 광고비, 플랫폼별 수수료 정책은 각 서비스와 전문가 안내를 확인하세요.
+          </aside>
+        </section>
+
+        <section class="grid" aria-label="마진율 계산기">
+          <div class="card calculator-card">
+            <h2>계산 입력</h2>
+            <label>판매가<input id="margin-selling-price" inputmode="numeric" value="30000" placeholder="예: 30000" aria-describedby="margin-input-help" /></label>
+            <label>상품 원가<input id="margin-product-cost" inputmode="numeric" value="12000" placeholder="예: 12000" /></label>
+            <label>수수료율(%)<input id="margin-fee-percent" inputmode="decimal" value="3.5" placeholder="예: 3.5" /></label>
+            <label>배송·포장비<input id="margin-shipping-cost" inputmode="numeric" value="3000" placeholder="예: 3000" /></label>
+            <label>기타 비용<input id="margin-extra-cost" inputmode="numeric" value="1000" placeholder="예: 1000" /></label>
+            <p id="margin-input-help" class="muted">쉼표를 넣어도 계산합니다. 입력값은 브라우저 안에서만 처리하고 외부로 저장하지 않습니다.</p>
+            <button class="button" id="margin-calculate" type="button">마진 계산하기</button>
+            <p id="margin-error" class="feedback error" role="alert"></p>
+          </div>
+
+          <aside class="card" id="margin-result" aria-labelledby="margin-result-title">
+            <h2 id="margin-result-title">결과 예시</h2>
+            <p class="muted">판매가 {formatKRW(exampleInput.sellingPrice)}, 원가 {formatKRW(exampleInput.productCost)}, 수수료율 {exampleInput.feePercent}% 기준</p>
+            <div class="result-list">
+              <div class="result-item"><span>수수료</span><strong data-result="feeAmount">{formatKRW(example.feeAmount)}</strong></div>
+              <div class="result-item"><span>총 비용</span><strong data-result="totalCost">{formatKRW(example.totalCost)}</strong></div>
+              <div class="result-item"><span>예상 이익</span><strong data-result="profitAmount">{formatKRW(example.profitAmount)}</strong></div>
+              <div class="result-item"><span>마진율</span><strong data-result="marginRatePercent">{formatPercent(example.marginRatePercent)}</strong></div>
+              <div class="result-item"><span>마크업률</span><strong data-result="markupRatePercent">{formatPercent(example.markupRatePercent)}</strong></div>
+              <div class="result-item"><span>손익분기 판매가</span><strong data-result="breakEvenPrice">{formatKRW(example.breakEvenPrice)}</strong></div>
+            </div>
+            <p class="muted">계산식: <span data-result="formulaText">{example.formulaText}</span></p>
+            <button class="button secondary" id="margin-copy" type="button" aria-describedby="margin-copy-status">결과 복사</button>
+            <p id="margin-copy-status" class="feedback success" aria-live="polite"></p>
+          </aside>
+        </section>
+
+        <section class="grid">
+          <div class="content-stack">
+            <article class="card">
+              <h2>마진율 계산법</h2>
+              <p class="muted">판매가에서 원가, 수수료, 배송·포장비, 기타 비용을 뺀 금액이 예상 이익입니다. 마진율은 예상 이익을 판매가로 나눈 값입니다.</p>
+              <code>마진율 = 예상 이익 ÷ 판매가 × 100</code>
+            </article>
+            <article class="card">
+              <h2>손익분기 판매가 계산법</h2>
+              <p class="muted">수수료율을 반영해 비용을 회수하는 최소 판매가를 역산합니다. 수수료율이 높을수록 손익분기 판매가가 올라갑니다.</p>
+              <code>손익분기 판매가 = 고정 비용 ÷ (1 - 수수료율)</code>
+            </article>
+          </div>
+          <aside class="card">
+            <h2>대표 검산 케이스</h2>
+            <ol class="examples">
+              <li>판매가 30,000원 / 총비용 17,050원 / 이익 12,950원 / 마진율 43.17%</li>
+              <li>판매가 10,000원 / 원가 7,000원 / 수수료 0% → 이익 3,000원</li>
+              <li>판매가 15,000원 / 원가 15,000원 / 수수료 5% → 이익 -750원</li>
+            </ol>
+          </aside>
+        </section>
+
+        <section class="card" aria-label="관련 도구">
+          <h2>관련 도구</h2>
+          <div class="related">
+            <a href="/tools/vat-calculator">부가세 계산기로 공급가액과 세액 확인하기</a>
+            <a href="/checklists/quote-checklist">견적서 체크리스트로 비용 항목 누락 줄이기</a>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>사업자 도구 모음 MVP · 외부 저장 없이 브라우저에서 계산하는 무료 도구를 목표로 합니다.</p>
+      </footer>
+    </div>
+    <script>
+      import { calculateMargin } from '../../lib/margin';
+      import { formatKRW } from '../../lib/format';
+
+      const fields = {
+        sellingPrice: document.querySelector<HTMLInputElement>('#margin-selling-price'),
+        productCost: document.querySelector<HTMLInputElement>('#margin-product-cost'),
+        feePercent: document.querySelector<HTMLInputElement>('#margin-fee-percent'),
+        shippingCost: document.querySelector<HTMLInputElement>('#margin-shipping-cost'),
+        extraCost: document.querySelector<HTMLInputElement>('#margin-extra-cost'),
+      };
+      const calculateButton = document.querySelector<HTMLButtonElement>('#margin-calculate');
+      const copyButton = document.querySelector<HTMLButtonElement>('#margin-copy');
+      const errorBox = document.querySelector<HTMLElement>('#margin-error');
+      const copyStatus = document.querySelector<HTMLElement>('#margin-copy-status');
+      const resultTargets = {
+        feeAmount: document.querySelector<HTMLElement>('[data-result="feeAmount"]'),
+        totalCost: document.querySelector<HTMLElement>('[data-result="totalCost"]'),
+        profitAmount: document.querySelector<HTMLElement>('[data-result="profitAmount"]'),
+        marginRatePercent: document.querySelector<HTMLElement>('[data-result="marginRatePercent"]'),
+        markupRatePercent: document.querySelector<HTMLElement>('[data-result="markupRatePercent"]'),
+        breakEvenPrice: document.querySelector<HTMLElement>('[data-result="breakEvenPrice"]'),
+        formulaText: document.querySelector<HTMLElement>('[data-result="formulaText"]'),
+      };
+      let latestCopyText = '';
+
+      function parseNumber(value: string): number {
+        return Number(value.replaceAll(',', '').trim());
+      }
+      function formatPercent(value: number | null): string {
+        return value === null ? '계산 제외' : `${value.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+      }
+      function setText(target: HTMLElement | null, value: string): void {
+        if (target) target.textContent = value;
+      }
+      function clearStatus(): void {
+        setText(errorBox, '');
+        setText(copyStatus, '');
+      }
+      function updateMarginResult(): void {
+        if (!fields.sellingPrice || !fields.productCost || !fields.feePercent || !fields.shippingCost || !fields.extraCost) return;
+        clearStatus();
+        try {
+          const result = calculateMargin({
+            sellingPrice: parseNumber(fields.sellingPrice.value),
+            productCost: parseNumber(fields.productCost.value),
+            feePercent: parseNumber(fields.feePercent.value),
+            shippingCost: parseNumber(fields.shippingCost.value || '0'),
+            extraCost: parseNumber(fields.extraCost.value || '0'),
+          });
+          latestCopyText = result.copyText;
+          setText(resultTargets.feeAmount, formatKRW(result.feeAmount));
+          setText(resultTargets.totalCost, formatKRW(result.totalCost));
+          setText(resultTargets.profitAmount, formatKRW(result.profitAmount));
+          setText(resultTargets.marginRatePercent, formatPercent(result.marginRatePercent));
+          setText(resultTargets.markupRatePercent, formatPercent(result.markupRatePercent));
+          setText(resultTargets.breakEvenPrice, formatKRW(result.breakEvenPrice));
+          setText(resultTargets.formulaText, result.formulaText);
+        } catch (error) {
+          latestCopyText = '';
+          setText(errorBox, error instanceof Error ? error.message : '계산 중 오류가 발생했습니다.');
+        }
+      }
+      async function copyMarginResult(): Promise<void> {
+        if (!latestCopyText) updateMarginResult();
+        if (!latestCopyText) return;
+        if (!navigator.clipboard?.writeText) {
+          setText(copyStatus, '이 브라우저에서는 자동 복사를 지원하지 않습니다. 결과 문구를 직접 선택해 복사해 주세요.');
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(latestCopyText);
+          setText(copyStatus, '계산 결과를 클립보드에 복사했습니다.');
+        } catch {
+          setText(copyStatus, '복사 권한을 사용할 수 없습니다. 결과 문구를 직접 선택해 복사해 주세요.');
+        }
+      }
+      Object.values(fields).forEach((field) => field?.addEventListener('input', updateMarginResult));
+      calculateButton?.addEventListener('click', updateMarginResult);
+      copyButton?.addEventListener('click', () => void copyMarginResult());
+      updateMarginResult();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  h1: string;
+  body: string;
+  items: string[];
+  notice: string;
+}
+
+const { title, description, h1, body, items, notice } = Astro.props;
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <style>
+      :root { font-family: Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f9fc; color: #172033; }
+      body { margin: 0; }
+      main { width: min(880px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0 72px; }
+      .card { padding: 36px; border: 1px solid #dce6f3; border-radius: 28px; background: #fff; box-shadow: 0 22px 70px rgba(40, 70, 120, 0.10); }
+      .badge { display: inline-flex; padding: 6px 12px; border-radius: 999px; background: #edf4ff; color: #1b66d2; font-weight: 800; }
+      h1 { margin: 18px 0 16px; font-size: clamp(2rem, 6vw, 3.8rem); line-height: 1.05; letter-spacing: -0.05em; }
+      p, li { color: #526071; line-height: 1.75; }
+      .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+      a { color: #1b66d2; font-weight: 800; }
+      .button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; background: #1b66d2; color: #fff; text-decoration: none; }
+      .notice { margin-top: 24px; padding: 16px 18px; border-left: 4px solid #f59e0b; border-radius: 14px; background: #fff8eb; color: #6b4a12; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card" aria-labelledby="page-title">
+        <span class="badge">준비 중</span>
+        <h1 id="page-title">{h1}</h1>
+        <p>{body}</p>
+        <ul>
+          {items.map((item) => <li>{item}</li>)}
+        </ul>
+        <div class="links">
+          <a class="button" href="/tools/vat-calculator">부가세 계산기 먼저 사용하기</a>
+          <a href="/">홈으로 돌아가기</a>
+        </div>
+        <p class="notice">{notice} 현재 페이지는 공개 전 로컬 MVP의 준비 중 화면입니다.</p>
+      </section>
+    </main>
+  </body>
+</html>
