@@ -9,14 +9,7 @@ const vatHtmlPath = join(projectRoot, 'dist/tools/vat-calculator/index.html');
 const marginHtmlPath = join(projectRoot, 'dist/tools/margin-calculator/index.html');
 const wageHtmlPath = join(projectRoot, 'dist/tools/wage-converter/index.html');
 const quoteHtmlPath = join(projectRoot, 'dist/checklists/quote-checklist/index.html');
-const placeholderPages = [
-  {
-    path: join(projectRoot, 'dist/checklists/landing-copy-checklist/index.html'),
-    sourcePath: join(projectRoot, 'src/pages/checklists/landing-copy-checklist.astro'),
-    h1: '사업자용 랜딩 문구 템플릿 체크리스트',
-    description: '상품 소개, 고객 문제, 핵심 혜택, 신뢰 요소, CTA 문구가 랜딩 페이지에 빠지지 않았는지 점검하는 체크리스트를 준비하고 있습니다.'
-  },
-];
+const landingCopyHtmlPath = join(projectRoot, 'dist/checklists/landing-copy-checklist/index.html');
 
 beforeAll(() => {
   execFileSync('npm', ['run', 'build'], {
@@ -41,10 +34,12 @@ describe('built home static HTML', () => {
     expect(html).toContain('href="/tools/wage-converter"');
     expect(html).toContain('인건비 계산기 바로 쓰기');
     expect(html).toContain('견적서 체크리스트 바로 쓰기');
+    expect(html).toContain('랜딩 문구 체크리스트 바로 쓰기');
     expect(html).toContain('사용 가능/준비 중인 도구');
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?마진율·원가·판매가 계산기/);
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?인건비\/시급\/월급 환산 계산기/);
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?견적서 항목 체크리스트/);
+    expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?사업자용 랜딩 문구 템플릿 체크리스트/);
     expect(html).toContain('마진율·원가·판매가 계산기');
     expect(html).toContain('인건비/시급/월급 환산 계산기');
     expect(html).toContain('견적서 항목 체크리스트');
@@ -174,30 +169,27 @@ describe('built quote checklist static HTML', () => {
   });
 });
 
-describe('built placeholder static HTML', () => {
-  it('creates Korean preparation pages for every homepage internal link', () => {
-    for (const page of placeholderPages) {
-      const html = readFileSync(page.path, 'utf8');
+describe('built landing copy checklist static HTML', () => {
+  it('replaces the preparation page with a launchable landing copy checklist', () => {
+    const html = readFileSync(landingCopyHtmlPath, 'utf8');
 
-      expect(html).toContain('lang="ko"');
-      expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>준비 중<\/span>/);
-      expect(html).toMatch(new RegExp(`<h1\\b[^>]*>${page.h1}<\\/h1>`));
-      expect(html).toContain(page.description);
-      expect(html).toContain('href="/tools/vat-calculator"');
-      expect(html).toContain('href="/"');
-      expect(html).toContain('참고용 도구이며');
-      expect(html).toContain('현재 페이지는 공개 전 로컬 MVP의 준비 중 화면입니다.');
-    }
-  });
-
-  it('renders every preparation page through the shared ComingSoonPage component', () => {
-    for (const page of placeholderPages) {
-      const source = readFileSync(page.sourcePath, 'utf8');
-
-      expect(source).toContain("import ComingSoonPage from '../../components/ComingSoonPage.astro';");
-      expect(source).toContain('<ComingSoonPage');
-      expect(source).not.toContain('<html lang="ko">');
-      expect(source).not.toContain('<style>');
-    }
+    expect(html).toContain('lang="ko"');
+    expect(html).toContain('<title>랜딩 문구 체크리스트 | 가치제안·혜택·CTA 점검</title>');
+    expect(html).toMatch(/<h1\b[^>]*>사업자용 랜딩 문구 템플릿 체크리스트<\/h1>/);
+    expect(html).toContain('랜딩 페이지를 공개하기 전 5분 안에 핵심 문구 누락을 확인하세요.');
+    expect(html).toContain('id="landing-copy-checklist"');
+    expect(html).toContain('id="landing-copy-value"');
+    expect(html).toContain('id="landing-copy-benefits"');
+    expect(html).toContain('id="landing-copy-proof"');
+    expect(html).toContain('id="landing-copy-cta"');
+    expect(html).toContain('id="landing-copy-risk"');
+    expect(html).toContain('id="landing-copy-template"');
+    expect(html).toContain('복사해서 랜딩 초안 점검에 붙여넣기');
+    expect(html).toContain('첫 화면에서 누구를 위한 상품인지 1문장으로 말했나요?');
+    expect(html).toContain('CTA 버튼 문구가 사용자의 다음 행동을 동사로 말하나요?');
+    expect(html).toContain('href="/tools/vat-calculator"');
+    expect(html).toContain('href="/tools/margin-calculator"');
+    expect(html).toContain('href="/checklists/quote-checklist"');
+    expect(html).toContain('참고용 체크리스트이며 광고 성과·법률 문구·업종별 표시 의무 판단은 전문가 확인이 필요합니다.');
   });
 });
