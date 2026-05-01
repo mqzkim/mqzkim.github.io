@@ -25,6 +25,12 @@ describe('built home static HTML', () => {
 
     expect(html).toContain('lang="ko"');
     expect(html).toContain('<title>소상공인 무료 계산기와 체크리스트</title>');
+    expect(html).toContain('rel="canonical" href="https://mqzkim.github.io/"');
+    expect(html).toContain('property="og:title" content="소상공인 무료 계산기와 체크리스트"');
+    expect(html).toContain('property="og:description" content="소상공인을 위한 무료 계산기와 체크리스트. 부가세, 마진율, 인건비 계산과 견적서·랜딩 문구 점검을 빠르게 시작하세요."');
+    expect(html).toContain('property="og:url" content="https://mqzkim.github.io/"');
+    expect(html).toContain('property="og:type" content="website"');
+    expect(html).toContain('name="twitter:card" content="summary"');
     expect(html).toMatch(/<h1\b[^>]*>소상공인을 위한 무료 계산기와 체크리스트<\/h1>/);
     expect(html).toContain('부가세, 마진율, 인건비처럼 자주 확인하는 숫자를 빠르게 계산하고 견적·랜딩 문구 체크리스트로 누락을 줄입니다.');
     expect(html).toContain('href="/tools/vat-calculator"');

@@ -32,10 +32,14 @@ const tools = [
   },
 ];
 
+const pageTitle = '소상공인 무료 계산기와 체크리스트';
+const pageDescription = '소상공인을 위한 무료 계산기와 체크리스트. 부가세, 마진율, 인건비 계산과 견적서·랜딩 문구 점검을 빠르게 시작하세요.';
+const canonicalUrl = 'https://mqzkim.github.io/';
+
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  name: '소상공인 무료 계산기와 체크리스트',
+  name: pageTitle,
   description: '소상공인을 위한 무료 계산기와 체크리스트 모음',
   numberOfItems: tools.length,
   itemListElement: tools.map((tool, index) => ({
@@ -55,11 +59,16 @@ const structuredData = {
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <meta
-      name="description"
-      content="소상공인을 위한 무료 계산기와 체크리스트. 부가세, 마진율, 인건비 계산과 견적서·랜딩 문구 점검을 빠르게 시작하세요."
-    />
-    <title>소상공인 무료 계산기와 체크리스트</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <title>{pageTitle}</title>
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     <style>
       :root {
