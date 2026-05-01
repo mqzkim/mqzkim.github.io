@@ -124,7 +124,8 @@ const formatPercent = (value: number | null) => value === null ? '계산 제외'
               <div class="result-item"><span>손익분기 판매가</span><strong data-result="breakEvenPrice">{formatKRW(example.breakEvenPrice)}</strong></div>
             </div>
             <p class="muted">계산식: <span data-result="formulaText">{example.formulaText}</span></p>
-            <button class="button secondary" id="margin-copy" type="button" aria-describedby="margin-copy-status">결과 복사</button>
+            <p id="margin-copy-help" class="muted">복사가 막히면 결과 문구를 직접 선택해 복사할 수 있습니다.</p>
+            <button class="button secondary" id="margin-copy" type="button" aria-describedby="margin-copy-help margin-copy-status">결과 복사</button>
             <p id="margin-copy-status" class="feedback success" aria-live="polite"></p>
           </aside>
         </section>

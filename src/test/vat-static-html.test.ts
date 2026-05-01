@@ -89,6 +89,11 @@ describe('built margin calculator static HTML', () => {
     expect(html).toContain('id="margin-fee-percent"');
     expect(html).toContain('id="margin-shipping-cost"');
     expect(html).toContain('id="margin-extra-cost"');
+    expect(html).toContain('id="margin-calculate"');
+    expect(html).toContain('id="margin-error"');
+    expect(html).toContain('role="alert"');
+    expect(html).toContain('id="margin-input-help"');
+    expect(html).toContain('aria-describedby="margin-input-help"');
     expect(html).toContain('id="margin-result"');
     expect(html).toContain('aria-labelledby="margin-result-title"');
     expect(html).toContain('data-result="profitAmount"');
@@ -98,7 +103,10 @@ describe('built margin calculator static HTML', () => {
     expect(html).toContain('43.17%');
     expect(html).toContain('16,581원');
     expect(html).toContain('id="margin-copy"');
-    expect(html).toContain('aria-describedby="margin-copy-status"');
+    expect(html).toContain('aria-describedby="margin-copy-help margin-copy-status"');
+    expect(html).toContain('id="margin-copy-help"');
+    expect(html).toContain('복사가 막히면 결과 문구를 직접 선택해 복사할 수 있습니다.');
+    expect(html).toMatch(/<script[^>]+type="module"[^>]+src="\/_astro\/margin-calculator\.astro_astro_type_script_index_0_lang\.[^"]+\.js"/);
     expect(html).toContain('href="/tools/vat-calculator"');
     expect(html).toContain('href="/checklists/quote-checklist"');
     expect(html).toContain('이 계산기는 빠른 확인을 위한 참고용 도구입니다.');
