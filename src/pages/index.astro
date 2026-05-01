@@ -36,7 +36,22 @@ const pageTitle = '소상공인 무료 계산기와 체크리스트';
 const pageDescription = '소상공인을 위한 무료 계산기와 체크리스트. 부가세, 마진율, 인건비 계산과 견적서·랜딩 문구 점검을 빠르게 시작하세요.';
 const canonicalUrl = 'https://mqzkim.github.io/';
 
-const structuredData = {
+const faqItems = [
+  {
+    question: '계산 결과를 저장하나요?',
+    answer: '입력한 값은 브라우저 화면에서만 계산하며 서버에 저장하지 않습니다.',
+  },
+  {
+    question: '세무·노무 신고에 그대로 써도 되나요?',
+    answer: '빠른 확인을 위한 참고용 도구이므로 신고, 계약, 급여 확정 전에는 전문가 확인이 필요합니다.',
+  },
+  {
+    question: '어떤 순서로 쓰면 좋나요?',
+    answer: '부가세 계산기로 금액 기준을 맞추고, 마진율 계산기로 남는 금액을 확인한 뒤 견적서와 랜딩 문구 체크리스트로 공개 전 누락을 점검하세요.',
+  },
+];
+
+const itemListStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   name: pageTitle,
@@ -50,6 +65,21 @@ const structuredData = {
     url: tool.href,
   })),
 };
+
+const faqStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+
+const structuredData = [itemListStructuredData, faqStructuredData];
 ---
 
 <html lang="ko">
@@ -202,6 +232,29 @@ const structuredData = {
         font-weight: 700;
       }
 
+      .faq-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .faq-item {
+        padding: 20px;
+        border: 1px solid #dce6f3;
+        border-radius: 18px;
+        background: #fff;
+      }
+
+      .faq-item h3 {
+        margin: 0 0 8px;
+        font-size: 1.05rem;
+      }
+
+      .faq-item p {
+        margin: 0;
+        color: #647284;
+        line-height: 1.7;
+      }
+
       .notice {
         margin-top: 28px;
         padding: 18px 20px;
@@ -244,6 +297,18 @@ const structuredData = {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section id="home-faq" aria-labelledby="home-faq-title">
+        <h2 id="home-faq-title">자주 묻는 질문</h2>
+        <div class="faq-grid">
+          {faqItems.map((item) => (
+            <article class="faq-item">
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <p class="notice">

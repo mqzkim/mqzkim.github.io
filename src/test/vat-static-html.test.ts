@@ -49,6 +49,13 @@ describe('built home static HTML', () => {
     expect(html).toContain('"numberOfItems":5');
     expect(html).toContain('"url":"/tools/vat-calculator"');
     expect(html).toContain('"url":"/checklists/landing-copy-checklist"');
+    expect(html).toContain('id="home-faq"');
+    expect(html).toContain('자주 묻는 질문');
+    expect(html).toContain('계산 결과를 저장하나요?');
+    expect(html).toContain('입력한 값은 브라우저 화면에서만 계산하며 서버에 저장하지 않습니다.');
+    expect(html).toContain('"@type":"FAQPage"');
+    expect(html).toContain('"@type":"Question"');
+    expect(html).toContain('"acceptedAnswer"');
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?마진율·원가·판매가 계산기/);
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?인건비\/시급\/월급 환산 계산기/);
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?견적서 항목 체크리스트/);
