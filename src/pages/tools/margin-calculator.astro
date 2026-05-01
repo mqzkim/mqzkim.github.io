@@ -14,6 +14,17 @@ const title = '마진율 계산기 | 원가·수수료·배송비 반영 순이�
 const description = '판매가, 원가, 수수료, 배송비를 입력해 예상 이익과 마진율, 손익분기 판매가를 빠르게 확인하세요.';
 const canonicalUrl = 'https://mqzkim.github.io/tools/margin-calculator/';
 const formatPercent = (value: number | null) => value === null ? '계산 제외' : `${value.toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: '마진율 계산기',
+  description,
+  url: canonicalUrl,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  inLanguage: 'ko-KR',
+  isAccessibleForFree: true,
+};
 ---
 
 <html lang="ko">
@@ -24,6 +35,14 @@ const formatPercent = (value: number | null) => value === null ? '계산 제외'
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
     <style>

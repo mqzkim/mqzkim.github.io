@@ -55,6 +55,15 @@ const templateLines = [
   '[CTA] 다음 행동 버튼 문구와 문의 전 필요 정보:',
   '[리스크] 환불·일정·제외 범위·필수 표시 문구:',
 ];
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: '랜딩 문구 체크리스트',
+  description,
+  url: canonicalUrl,
+  inLanguage: 'ko-KR',
+  isAccessibleForFree: true,
+};
 ---
 
 <html lang="ko">
@@ -65,6 +74,14 @@ const templateLines = [
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
     <style>

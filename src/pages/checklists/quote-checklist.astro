@@ -62,6 +62,15 @@ const copyTemplate = `견적 전 점검
 - 수정 횟수/범위:
 - 검수 완료 기준:
 - 취소·환불·권리 인도 조건:`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: '견적서 체크리스트',
+  description,
+  url: canonicalUrl,
+  inLanguage: 'ko-KR',
+  isAccessibleForFree: true,
+};
 ---
 
 <html lang="ko">
@@ -72,6 +81,14 @@ const copyTemplate = `견적 전 점검
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
     <style>

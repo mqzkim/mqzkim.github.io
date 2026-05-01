@@ -12,6 +12,17 @@ const example = calculateVat({
 const title = '부가세 계산기 | 공급가액·세액·총액 빠른 계산';
 const description = '공급가액에서 부가세 포함 금액을 계산하거나, 총액에서 공급가액과 부가세액을 빠르게 나눠보세요. 기본 세율 10%, 반올림 방식 선택 가능.';
 const canonicalUrl = 'https://mqzkim.github.io/tools/vat-calculator/';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: '부가세 계산기',
+  description,
+  url: canonicalUrl,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  inLanguage: 'ko-KR',
+  isAccessibleForFree: true,
+};
 ---
 
 <html lang="ko">
@@ -22,6 +33,14 @@ const canonicalUrl = 'https://mqzkim.github.io/tools/vat-calculator/';
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <link rel="icon" href="/favicon.ico" />
     <title>{title}</title>
     <style>

@@ -207,6 +207,35 @@ describe('built landing copy checklist static HTML', () => {
   });
 });
 
+describe('individual page social metadata', () => {
+  const pages = [
+    { path: vatHtmlPath, title: '부가세 계산기 | 공급가액·세액·총액 빠른 계산', url: 'https://mqzkim.github.io/tools/vat-calculator/', schemaType: 'WebApplication' },
+    { path: marginHtmlPath, title: '마진율 계산기 | 원가·수수료·배송비 반영 순이익 계산', url: 'https://mqzkim.github.io/tools/margin-calculator/', schemaType: 'WebApplication' },
+    { path: wageHtmlPath, title: '인건비 계산기 | 시급·일급·주급·월급 환산', url: 'https://mqzkim.github.io/tools/wage-converter/', schemaType: 'WebApplication' },
+    { path: quoteHtmlPath, title: '견적서 체크리스트 | 금액·범위·납기 제출 전 점검', url: 'https://mqzkim.github.io/checklists/quote-checklist/', schemaType: 'CreativeWork' },
+    { path: landingCopyHtmlPath, title: '랜딩 문구 체크리스트 | 가치제안·혜택·CTA 점검', url: 'https://mqzkim.github.io/checklists/landing-copy-checklist/', schemaType: 'CreativeWork' },
+  ];
+
+  it('publishes OG, Twitter, canonical, and JSON-LD metadata for every launched detail page', () => {
+    for (const page of pages) {
+      const html = readFileSync(page.path, 'utf8');
+
+      expect(html).toContain(`rel="canonical" href="${page.url}"`);
+      expect(html).toContain(`property="og:title" content="${page.title}"`);
+      expect(html).toContain(`property="og:url" content="${page.url}"`);
+      expect(html).toContain('property="og:description"');
+      expect(html).toContain('name="twitter:card" content="summary"');
+      expect(html).toContain('name="twitter:title"');
+      expect(html).toContain('name="twitter:description"');
+      expect(html).toContain('type="application/ld+json"');
+      expect(html).toContain(`"@type":"${page.schemaType}"`);
+      expect(html).toContain(`"url":"${page.url}"`);
+      expect(html).toContain('"inLanguage":"ko-KR"');
+      expect(html).toContain('"isAccessibleForFree":true');
+    }
+  });
+});
+
 describe('SEO discovery files', () => {
   it('publishes a sitemap and robots.txt with every launchable local route', () => {
     const sitemap = readFileSync(sitemapXmlPath, 'utf8');
