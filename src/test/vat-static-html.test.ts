@@ -7,13 +7,8 @@ const projectRoot = process.cwd();
 const homeHtmlPath = join(projectRoot, 'dist/index.html');
 const vatHtmlPath = join(projectRoot, 'dist/tools/vat-calculator/index.html');
 const marginHtmlPath = join(projectRoot, 'dist/tools/margin-calculator/index.html');
+const wageHtmlPath = join(projectRoot, 'dist/tools/wage-converter/index.html');
 const placeholderPages = [
-  {
-    path: join(projectRoot, 'dist/tools/wage-converter/index.html'),
-    sourcePath: join(projectRoot, 'src/pages/tools/wage-converter.astro'),
-    h1: '인건비/시급/월급 환산 계산기',
-    description: '시급, 일 근무시간, 주 근무일, 월급을 서로 환산해 기본 인건비를 가늠하는 도구를 준비하고 있습니다.',
-  },
   {
     path: join(projectRoot, 'dist/checklists/quote-checklist/index.html'),
     sourcePath: join(projectRoot, 'src/pages/checklists/quote-checklist.astro'),
@@ -48,8 +43,11 @@ describe('built home static HTML', () => {
     expect(html).toContain('부가세 계산기 바로 쓰기');
     expect(html).toContain('href="/tools/margin-calculator"');
     expect(html).toContain('마진율 계산기 바로 쓰기');
+    expect(html).toContain('href="/tools/wage-converter"');
+    expect(html).toContain('인건비 계산기 바로 쓰기');
     expect(html).toContain('사용 가능/준비 중인 도구');
     expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?마진율·원가·판매가 계산기/);
+    expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?인건비\/시급\/월급 환산 계산기/);
     expect(html).toContain('마진율·원가·판매가 계산기');
     expect(html).toContain('인건비/시급/월급 환산 계산기');
     expect(html).toContain('견적서 항목 체크리스트');
@@ -113,6 +111,35 @@ describe('built margin calculator static HTML', () => {
     expect(html).toContain('href="/tools/vat-calculator"');
     expect(html).toContain('href="/checklists/quote-checklist"');
     expect(html).toContain('이 계산기는 빠른 확인을 위한 참고용 도구입니다.');
+  });
+});
+
+describe('built wage converter static HTML', () => {
+  it('replaces the preparation page with a launchable wage converter page', () => {
+    const html = readFileSync(wageHtmlPath, 'utf8');
+
+    expect(html).toContain('lang="ko"');
+    expect(html).toContain('<title>인건비 계산기 | 시급·일급·주급·월급 환산</title>');
+    expect(html).toMatch(/<h1\b[^>]*>인건비\/시급\/월급 환산 계산기<\/h1>/);
+    expect(html).toContain('시급과 근무 패턴으로 월 인건비를 빠르게 확인하세요.');
+    expect(html).toContain('id="wage-hourly-wage"');
+    expect(html).toContain('id="wage-daily-hours"');
+    expect(html).toContain('id="wage-weekly-work-days"');
+    expect(html).toContain('id="wage-monthly-work-days"');
+    expect(html).toContain('id="wage-monthly-salary"');
+    expect(html).toContain('id="wage-result"');
+    expect(html).toContain('aria-labelledby="wage-result-title"');
+    expect(html).toContain('data-result="dailyPay"');
+    expect(html).toContain('data-result="weeklyPay"');
+    expect(html).toContain('data-result="monthlyPay"');
+    expect(html).toContain('data-result="effectiveHourlyWage"');
+    expect(html).toContain('72,000원');
+    expect(html).toContain('360,000원');
+    expect(html).toContain('1,584,000원');
+    expect(html).toContain('id="wage-copy"');
+    expect(html).toContain('href="/tools/vat-calculator"');
+    expect(html).toContain('href="/tools/margin-calculator"');
+    expect(html).toContain('참고용 도구이며 노무·세무·법률 판단은 전문가 확인이 필요합니다.');
   });
 });
 

@@ -1,18 +1,160 @@
 ---
-import ComingSoonPage from '../../components/ComingSoonPage.astro';
+import { calculateWageConversion } from '../../lib/wage';
+import { formatKRW } from '../../lib/format';
 
-const title = '인건비/시급/월급 환산 계산기 준비 중 | 사업자 도구 모음';
-const description = '시급, 근무시간, 월급을 서로 환산해 기본 인건비 감각을 잡는 무료 도구를 준비 중입니다.';
+const exampleInput = {
+  hourlyWage: 12_000,
+  dailyHours: 6,
+  weeklyWorkDays: 5,
+  monthlyWorkDays: 22,
+};
+const example = calculateWageConversion(exampleInput);
+const title = '인건비 계산기 | 시급·일급·주급·월급 환산';
+const description = '시급, 근무시간, 근무일을 입력해 일급·주급·월급·연봉 환산액과 실질 시급을 빠르게 확인하세요.';
+const formatHours = (value: number) => value.toLocaleString('ko-KR', { maximumFractionDigits: 2 });
 ---
 
-<ComingSoonPage
-  title={title}
-  description={description}
-  h1="인건비/시급/월급 환산 계산기"
-  body="시급, 일 근무시간, 주 근무일, 월급을 서로 환산해 기본 인건비를 가늠하는 도구를 준비하고 있습니다."
-  items={[
-    '예정 입력값: 시급, 일 근무시간, 주 근무일, 월 근무일, 월급',
-    '예정 출력값: 일급, 주급, 월급 환산액, 참고 계산식',
-  ]}
-  notice="참고용 도구이며 노무·세무·법률 판단은 전문가 확인이 필요합니다."
-/>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{title}</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, Pretendard, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f8fafc;
+        color: #172033;
+      }
+      body { margin: 0; background: linear-gradient(180deg, #fff 0%, #f4f8ff 52%, #eef4fb 100%); }
+      a { color: #2458c7; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+      header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0; }
+      .brand { font-weight: 800; letter-spacing: -0.03em; }
+      nav { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.94rem; }
+      .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr); gap: 28px; align-items: stretch; padding: 48px 0 28px; }
+      .eyebrow { color: #2458c7; font-weight: 800; margin: 0 0 10px; }
+      h1 { font-size: clamp(2.25rem, 6vw, 4.6rem); line-height: 0.98; letter-spacing: -0.07em; margin: 0 0 20px; }
+      .lead { color: #45526a; font-size: clamp(1.05rem, 2.2vw, 1.26rem); line-height: 1.75; margin: 0; }
+      .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 420px); gap: 24px; align-items: start; padding-bottom: 64px; }
+      .card { background: rgba(255,255,255,.92); border: 1px solid rgba(75, 105, 170, .16); border-radius: 28px; box-shadow: 0 24px 70px rgba(40, 70, 120, .1); padding: 28px; }
+      .card h2, .card h3 { margin-top: 0; letter-spacing: -0.035em; }
+      .calculator-card { display: grid; gap: 18px; }
+      label { display: grid; gap: 8px; font-weight: 700; color: #2d3951; }
+      input { width: 100%; box-sizing: border-box; border: 1px solid #d9e3f2; border-radius: 16px; padding: 14px 16px; font: inherit; background: #fff; }
+      .button { display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 16px; background: #1f3f8f; color: white; padding: 15px 18px; font: inherit; font-weight: 800; cursor: pointer; }
+      .button.secondary { background: #2458c7; }
+      .feedback { border-radius: 16px; padding: 12px 14px; line-height: 1.55; }
+      .feedback:empty { display: none; }
+      .feedback.success { background: #eef4ff; color: #243f81; }
+      .muted { color: #68758c; line-height: 1.7; }
+      .result-list { display: grid; gap: 12px; margin: 20px 0; }
+      .result-item { display: flex; justify-content: space-between; gap: 16px; border-radius: 18px; background: #f3f7ff; padding: 16px; }
+      .result-item strong { font-size: 1.18rem; text-align: right; }
+      .notice { border-left: 4px solid #f0a43c; background: #fff8ed; border-radius: 18px; padding: 16px 18px; color: #5e4520; line-height: 1.65; }
+      .content-stack { display: grid; gap: 20px; }
+      .examples { display: grid; gap: 10px; padding-left: 20px; }
+      .related { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .related a { border: 1px solid #dce5f4; border-radius: 18px; background: #fff; padding: 16px; font-weight: 800; }
+      footer { padding: 32px 0 48px; color: #68758c; }
+      @media (max-width: 840px) {
+        header, .hero, .grid { grid-template-columns: 1fr; }
+        header { align-items: flex-start; flex-direction: column; }
+        .related { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="/">사업자 도구 모음</a>
+        <nav aria-label="주요 도구">
+          <a href="/tools/vat-calculator">부가세 계산기</a>
+          <a href="/tools/margin-calculator">마진율 계산기</a>
+          <a href="/checklists/quote-checklist">견적서 체크리스트</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div>
+            <p class="eyebrow">무료 계산 도구 · 채용/외주 전 인건비 감각 잡기</p>
+            <h1>인건비/시급/월급 환산 계산기</h1>
+            <p class="lead">시급과 근무 패턴으로 월 인건비를 빠르게 확인하세요. 일 근무시간, 주 근무일, 월 근무일을 넣어 일급·주급·월급·연 환산액을 한 번에 비교합니다.</p>
+          </div>
+          <aside class="card notice" aria-label="참고용 고지">
+            참고용 도구이며 노무·세무·법률 판단은 전문가 확인이 필요합니다. 최저임금, 주휴수당, 4대보험, 세전·세후 판정은 이번 MVP에서 자동 판단하지 않습니다.
+          </aside>
+        </section>
+
+        <section class="grid" aria-label="인건비 환산 계산기">
+          <div class="card calculator-card">
+            <h2>계산 입력</h2>
+            <label>시급<input id="wage-hourly-wage" inputmode="numeric" value="12000" placeholder="예: 12000" /></label>
+            <label>일 근무시간<input id="wage-daily-hours" inputmode="decimal" value="6" placeholder="예: 6" /></label>
+            <label>주 근무일<input id="wage-weekly-work-days" inputmode="numeric" value="5" placeholder="예: 5" /></label>
+            <label>월 근무일<input id="wage-monthly-work-days" inputmode="numeric" value="22" placeholder="예: 22" /></label>
+            <label>월급(선택, 실질 시급 역산)<input id="wage-monthly-salary" inputmode="numeric" placeholder="예: 2200000" /></label>
+            <button class="button" id="wage-calculate" type="button">인건비 환산하기</button>
+          </div>
+
+          <aside class="card" id="wage-result" aria-labelledby="wage-result-title">
+            <h2 id="wage-result-title">결과 예시</h2>
+            <p class="muted">시급 {formatKRW(exampleInput.hourlyWage)}, 일 {exampleInput.dailyHours}시간, 월 {exampleInput.monthlyWorkDays}일 기준</p>
+            <div class="result-list">
+              <div class="result-item"><span>일급</span><strong data-result="dailyPay">{formatKRW(example.dailyPay)}</strong></div>
+              <div class="result-item"><span>주급</span><strong data-result="weeklyPay">{formatKRW(example.weeklyPay)}</strong></div>
+              <div class="result-item"><span>월 환산</span><strong data-result="monthlyPay">{formatKRW(example.monthlyPay)}</strong></div>
+              <div class="result-item"><span>연 환산</span><strong data-result="yearlyPay">{formatKRW(example.yearlyPay)}</strong></div>
+              <div class="result-item"><span>주 근무시간</span><strong data-result="weeklyHours">{formatHours(example.weeklyHours)}시간</strong></div>
+              <div class="result-item"><span>월 근무시간</span><strong data-result="monthlyHours">{formatHours(example.monthlyHours)}시간</strong></div>
+              <div class="result-item"><span>실질 시급</span><strong data-result="effectiveHourlyWage">{formatKRW(example.effectiveHourlyWage)}</strong></div>
+            </div>
+            <p class="muted">계산식: <span data-result="formulaText">{example.formulaText}</span></p>
+            <button class="button secondary" id="wage-copy" type="button">결과 복사</button>
+            <p id="wage-copy-status" class="feedback success" aria-live="polite"></p>
+          </aside>
+        </section>
+
+        <section class="grid">
+          <div class="content-stack">
+            <article class="card">
+              <h2>인건비 환산 계산법</h2>
+              <p class="muted">월 환산액은 시급에 하루 근무시간과 월 근무일을 곱해 계산합니다. 월급을 별도로 입력하면 월 근무시간으로 나누어 실질 시급도 역산할 수 있습니다.</p>
+              <code>월 환산 = 시급 × 일 근무시간 × 월 근무일</code>
+            </article>
+            <article class="card">
+              <h2>이번 MVP에서 제외한 항목</h2>
+              <p class="muted">최저임금 기준일, 주휴수당, 4대보험, 원천세, 야간·연장·휴일 수당은 자동 판정하지 않습니다. 실제 지급 전에는 최신 법령과 전문가 확인이 필요합니다.</p>
+            </article>
+          </div>
+          <aside class="card">
+            <h2>대표 검산 케이스</h2>
+            <ol class="examples">
+              <li>시급 12,000원 / 일 6시간 / 월 22일 → 월 1,584,000원</li>
+              <li>시급 10,030원 / 일 7.5시간 / 월 21일 → 월 1,579,725원</li>
+              <li>월급 2,200,000원 / 월 176시간 → 실질 시급 12,500원</li>
+            </ol>
+          </aside>
+        </section>
+
+        <section class="card" aria-label="관련 도구">
+          <h2>관련 도구</h2>
+          <div class="related">
+            <a href="/tools/vat-calculator">부가세 계산기로 공급가액과 세액 확인하기</a>
+            <a href="/tools/margin-calculator">마진율 계산기로 가격과 원가 검산하기</a>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>사업자 도구 모음 MVP · 외부 저장 없이 브라우저에서 계산하는 무료 도구를 목표로 합니다.</p>
+      </footer>
+    </div>
+  </body>
+</html>
