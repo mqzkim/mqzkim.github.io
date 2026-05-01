@@ -45,6 +45,10 @@ describe('built home static HTML', () => {
     expect(html).toContain('랜딩 문구 체크리스트 바로 쓰기');
     expect(html).toContain('사용 가능/준비 중인 도구');
     expect(html).toContain('type="application/ld+json"');
+    expect(html).toContain('"@type":"WebSite"');
+    expect(html).toContain('"url":"https://mqzkim.github.io/"');
+    expect(html).toContain('"publisher":{"@type":"Organization","name":"사업자 도구 모음"}');
+    expect(html).toContain('"inLanguage":"ko-KR"');
     expect(html).toContain('"@type":"ItemList"');
     expect(html).toContain('"numberOfItems":5');
     expect(html).toContain('"url":"/tools/vat-calculator"');

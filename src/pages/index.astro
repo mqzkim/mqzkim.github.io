@@ -51,6 +51,19 @@ const faqItems = [
   },
 ];
 
+const websiteStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  inLanguage: 'ko-KR',
+  publisher: {
+    '@type': 'Organization',
+    name: '사업자 도구 모음',
+  },
+};
+
 const itemListStructuredData = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -79,7 +92,7 @@ const faqStructuredData = {
   })),
 };
 
-const structuredData = [itemListStructuredData, faqStructuredData];
+const structuredData = [websiteStructuredData, itemListStructuredData, faqStructuredData];
 ---
 
 <html lang="ko">
