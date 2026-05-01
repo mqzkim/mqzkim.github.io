@@ -127,6 +127,11 @@ describe('built wage converter static HTML', () => {
     expect(html).toContain('id="wage-weekly-work-days"');
     expect(html).toContain('id="wage-monthly-work-days"');
     expect(html).toContain('id="wage-monthly-salary"');
+    expect(html).toContain('id="wage-calculate"');
+    expect(html).toContain('id="wage-error"');
+    expect(html).toContain('role="alert"');
+    expect(html).toContain('id="wage-input-help"');
+    expect(html).toContain('aria-describedby="wage-input-help"');
     expect(html).toContain('id="wage-result"');
     expect(html).toContain('aria-labelledby="wage-result-title"');
     expect(html).toContain('data-result="dailyPay"');
@@ -137,6 +142,10 @@ describe('built wage converter static HTML', () => {
     expect(html).toContain('360,000원');
     expect(html).toContain('1,584,000원');
     expect(html).toContain('id="wage-copy"');
+    expect(html).toContain('aria-describedby="wage-copy-help wage-copy-status"');
+    expect(html).toContain('id="wage-copy-help"');
+    expect(html).toContain('복사가 막히면 결과 문구를 직접 선택해 복사할 수 있습니다.');
+    expect(html).toMatch(/<script[^>]+type="module"[^>]+src="\/_astro\/wage-converter\.astro_astro_type_script_index_0_lang\.[^"]+\.js"/);
     expect(html).toContain('href="/tools/vat-calculator"');
     expect(html).toContain('href="/tools/margin-calculator"');
     expect(html).toContain('참고용 도구이며 노무·세무·법률 판단은 전문가 확인이 필요합니다.');

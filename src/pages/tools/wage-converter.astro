@@ -52,6 +52,7 @@ const formatHours = (value: number) => value.toLocaleString('ko-KR', { maximumFr
       .feedback { border-radius: 16px; padding: 12px 14px; line-height: 1.55; }
       .feedback:empty { display: none; }
       .feedback.success { background: #eef4ff; color: #243f81; }
+      .feedback.error { background: #fff1f1; color: #a12b2b; }
       .muted { color: #68758c; line-height: 1.7; }
       .result-list { display: grid; gap: 12px; margin: 20px 0; }
       .result-item { display: flex; justify-content: space-between; gap: 16px; border-radius: 18px; background: #f3f7ff; padding: 16px; }
@@ -95,12 +96,14 @@ const formatHours = (value: number) => value.toLocaleString('ko-KR', { maximumFr
         <section class="grid" aria-label="인건비 환산 계산기">
           <div class="card calculator-card">
             <h2>계산 입력</h2>
-            <label>시급<input id="wage-hourly-wage" inputmode="numeric" value="12000" placeholder="예: 12000" /></label>
+            <label>시급<input id="wage-hourly-wage" inputmode="numeric" value="12000" placeholder="예: 12000" aria-describedby="wage-input-help" /></label>
             <label>일 근무시간<input id="wage-daily-hours" inputmode="decimal" value="6" placeholder="예: 6" /></label>
             <label>주 근무일<input id="wage-weekly-work-days" inputmode="numeric" value="5" placeholder="예: 5" /></label>
             <label>월 근무일<input id="wage-monthly-work-days" inputmode="numeric" value="22" placeholder="예: 22" /></label>
             <label>월급(선택, 실질 시급 역산)<input id="wage-monthly-salary" inputmode="numeric" placeholder="예: 2200000" /></label>
+            <p id="wage-input-help" class="muted">쉼표를 넣어도 계산합니다. 입력값은 브라우저 안에서만 처리하고 외부로 저장하지 않습니다.</p>
             <button class="button" id="wage-calculate" type="button">인건비 환산하기</button>
+            <p id="wage-error" class="feedback error" role="alert"></p>
           </div>
 
           <aside class="card" id="wage-result" aria-labelledby="wage-result-title">
@@ -116,7 +119,8 @@ const formatHours = (value: number) => value.toLocaleString('ko-KR', { maximumFr
               <div class="result-item"><span>실질 시급</span><strong data-result="effectiveHourlyWage">{formatKRW(example.effectiveHourlyWage)}</strong></div>
             </div>
             <p class="muted">계산식: <span data-result="formulaText">{example.formulaText}</span></p>
-            <button class="button secondary" id="wage-copy" type="button">결과 복사</button>
+            <p id="wage-copy-help" class="muted">복사가 막히면 결과 문구를 직접 선택해 복사할 수 있습니다.</p>
+            <button class="button secondary" id="wage-copy" type="button" aria-describedby="wage-copy-help wage-copy-status">결과 복사</button>
             <p id="wage-copy-status" class="feedback success" aria-live="polite"></p>
           </aside>
         </section>
@@ -156,5 +160,82 @@ const formatHours = (value: number) => value.toLocaleString('ko-KR', { maximumFr
         <p>사업자 도구 모음 MVP · 외부 저장 없이 브라우저에서 계산하는 무료 도구를 목표로 합니다.</p>
       </footer>
     </div>
+    <script>
+      import { buildWageViewModel } from '../../lib/wage-interaction';
+
+      const fields = {
+        hourlyWage: document.querySelector<HTMLInputElement>('#wage-hourly-wage'),
+        dailyHours: document.querySelector<HTMLInputElement>('#wage-daily-hours'),
+        weeklyWorkDays: document.querySelector<HTMLInputElement>('#wage-weekly-work-days'),
+        monthlyWorkDays: document.querySelector<HTMLInputElement>('#wage-monthly-work-days'),
+        monthlySalary: document.querySelector<HTMLInputElement>('#wage-monthly-salary'),
+      };
+      const calculateButton = document.querySelector<HTMLButtonElement>('#wage-calculate');
+      const copyButton = document.querySelector<HTMLButtonElement>('#wage-copy');
+      const errorBox = document.querySelector<HTMLElement>('#wage-error');
+      const copyStatus = document.querySelector<HTMLElement>('#wage-copy-status');
+      const resultTargets = {
+        dailyPay: document.querySelector<HTMLElement>('[data-result="dailyPay"]'),
+        weeklyPay: document.querySelector<HTMLElement>('[data-result="weeklyPay"]'),
+        monthlyPay: document.querySelector<HTMLElement>('[data-result="monthlyPay"]'),
+        yearlyPay: document.querySelector<HTMLElement>('[data-result="yearlyPay"]'),
+        weeklyHours: document.querySelector<HTMLElement>('[data-result="weeklyHours"]'),
+        monthlyHours: document.querySelector<HTMLElement>('[data-result="monthlyHours"]'),
+        effectiveHourlyWage: document.querySelector<HTMLElement>('[data-result="effectiveHourlyWage"]'),
+        formulaText: document.querySelector<HTMLElement>('[data-result="formulaText"]'),
+      };
+      let latestCopyText = '';
+
+      function setText(target: HTMLElement | null, value: string): void {
+        if (target) target.textContent = value;
+      }
+      function clearStatus(): void {
+        setText(errorBox, '');
+        setText(copyStatus, '');
+      }
+      function updateWageResult(): void {
+        if (!fields.hourlyWage || !fields.dailyHours || !fields.weeklyWorkDays || !fields.monthlyWorkDays || !fields.monthlySalary) return;
+        clearStatus();
+        try {
+          const viewModel = buildWageViewModel({
+            hourlyWage: fields.hourlyWage.value,
+            dailyHours: fields.dailyHours.value,
+            weeklyWorkDays: fields.weeklyWorkDays.value,
+            monthlyWorkDays: fields.monthlyWorkDays.value,
+            monthlySalary: fields.monthlySalary.value,
+          });
+          latestCopyText = viewModel.copyText;
+          setText(resultTargets.dailyPay, viewModel.dailyPay);
+          setText(resultTargets.weeklyPay, viewModel.weeklyPay);
+          setText(resultTargets.monthlyPay, viewModel.monthlyPay);
+          setText(resultTargets.yearlyPay, viewModel.yearlyPay);
+          setText(resultTargets.weeklyHours, viewModel.weeklyHours);
+          setText(resultTargets.monthlyHours, viewModel.monthlyHours);
+          setText(resultTargets.effectiveHourlyWage, viewModel.effectiveHourlyWage);
+          setText(resultTargets.formulaText, viewModel.formulaText);
+        } catch (error) {
+          latestCopyText = '';
+          setText(errorBox, error instanceof Error ? error.message : '계산 중 오류가 발생했습니다.');
+        }
+      }
+      async function copyWageResult(): Promise<void> {
+        if (!latestCopyText) updateWageResult();
+        if (!latestCopyText) return;
+        if (!navigator.clipboard?.writeText) {
+          setText(copyStatus, '이 브라우저에서는 자동 복사를 지원하지 않습니다. 결과 문구를 직접 선택해 복사해 주세요.');
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(latestCopyText);
+          setText(copyStatus, '계산 결과를 클립보드에 복사했습니다.');
+        } catch {
+          setText(copyStatus, '복사 권한을 사용할 수 없습니다. 결과 문구를 직접 선택해 복사해 주세요.');
+        }
+      }
+      Object.values(fields).forEach((field) => field?.addEventListener('input', updateWageResult));
+      calculateButton?.addEventListener('click', updateWageResult);
+      copyButton?.addEventListener('click', () => void copyWageResult());
+      updateWageResult();
+    </script>
   </body>
 </html>
