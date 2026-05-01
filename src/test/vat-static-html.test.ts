@@ -244,6 +244,13 @@ describe('individual page social metadata', () => {
       expect(html).toContain(`"url":"${page.url}"`);
       expect(html).toContain('"inLanguage":"ko-KR"');
       expect(html).toContain('"isAccessibleForFree":true');
+      expect(html).toContain('"@type":"BreadcrumbList"');
+      expect(html).toContain('"itemListElement"');
+      expect(html).toContain('"position":1');
+      expect(html).toContain('"name":"홈"');
+      expect(html).toContain('"item":"https://mqzkim.github.io/"');
+      expect(html).toContain('"position":2');
+      expect(html).toContain(`"item":"${page.url}"`);
     }
   });
 });
