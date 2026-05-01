@@ -10,7 +10,7 @@ const tools = [
     title: '마진율·원가·판매가 계산기',
     description: '원가, 판매가, 수수료를 바탕으로 실제 남는 금액을 확인합니다.',
     href: '/tools/margin-calculator',
-    status: '준비 중',
+    status: '사용 가능',
   },
   {
     title: '인건비/시급/월급 환산 계산기',
@@ -198,12 +198,13 @@ const tools = [
         </p>
         <div class="actions">
           <a class="button" href="/tools/vat-calculator">부가세 계산기 바로 쓰기</a>
-          <a class="secondary-link" href="#tools">준비 중인 도구 보기</a>
+          <a class="button" href="/tools/margin-calculator">마진율 계산기 바로 쓰기</a>
+          <a class="secondary-link" href="#tools">전체 도구 보기</a>
         </div>
       </section>
 
       <section id="tools" aria-labelledby="tools-title">
-        <h2 id="tools-title">준비 중인 도구</h2>
+        <h2 id="tools-title">사용 가능/준비 중인 도구</h2>
         <ul class="tool-grid">
           {tools.map((tool) => (
             <li class="tool-card">

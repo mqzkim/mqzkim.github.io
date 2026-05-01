@@ -46,7 +46,10 @@ describe('built home static HTML', () => {
     expect(html).toContain('부가세, 마진율, 인건비처럼 자주 확인하는 숫자를 빠르게 계산하고 견적·랜딩 문구 체크리스트로 누락을 줄입니다.');
     expect(html).toContain('href="/tools/vat-calculator"');
     expect(html).toContain('부가세 계산기 바로 쓰기');
-    expect(html).toContain('준비 중인 도구');
+    expect(html).toContain('href="/tools/margin-calculator"');
+    expect(html).toContain('마진율 계산기 바로 쓰기');
+    expect(html).toContain('사용 가능/준비 중인 도구');
+    expect(html).toMatch(/<span\b[^>]*class="badge"[^>]*>사용 가능<\/span>[\s\S]*?마진율·원가·판매가 계산기/);
     expect(html).toContain('마진율·원가·판매가 계산기');
     expect(html).toContain('인건비/시급/월급 환산 계산기');
     expect(html).toContain('견적서 항목 체크리스트');
