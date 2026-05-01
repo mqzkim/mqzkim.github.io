@@ -12,6 +12,7 @@ const quoteHtmlPath = join(projectRoot, 'dist/checklists/quote-checklist/index.h
 const landingCopyHtmlPath = join(projectRoot, 'dist/checklists/landing-copy-checklist/index.html');
 const sitemapXmlPath = join(projectRoot, 'dist/sitemap.xml');
 const robotsTxtPath = join(projectRoot, 'dist/robots.txt');
+const llmsTxtPath = join(projectRoot, 'dist/llms.txt');
 
 beforeAll(() => {
   execFileSync('npm', ['run', 'build'], {
@@ -251,6 +252,7 @@ describe('SEO discovery files', () => {
   it('publishes a sitemap and robots.txt with every launchable local route', () => {
     const sitemap = readFileSync(sitemapXmlPath, 'utf8');
     const robots = readFileSync(robotsTxtPath, 'utf8');
+    const llms = readFileSync(llmsTxtPath, 'utf8');
 
     expect(sitemap).toContain('<?xml version="1.0" encoding="UTF-8"?>');
     expect(sitemap).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
@@ -266,5 +268,15 @@ describe('SEO discovery files', () => {
     expect(robots).toContain('User-agent: *');
     expect(robots).toContain('Allow: /');
     expect(robots).toContain('Sitemap: https://mqzkim.github.io/sitemap.xml');
+    expect(robots).toContain('LLM-Content: https://mqzkim.github.io/llms.txt');
+
+    expect(llms).toContain('# 소상공인 무료 계산기와 체크리스트');
+    expect(llms).toContain('> 부가세, 마진율, 인건비 계산과 견적서·랜딩 문구 점검을 위한 무료 정적 웹 도구 모음입니다.');
+    expect(llms).toContain('- [부가세 포함/제외 계산기](https://mqzkim.github.io/tools/vat-calculator/)');
+    expect(llms).toContain('- [마진율·원가·판매가 계산기](https://mqzkim.github.io/tools/margin-calculator/)');
+    expect(llms).toContain('- [인건비/시급/월급 환산 계산기](https://mqzkim.github.io/tools/wage-converter/)');
+    expect(llms).toContain('- [견적서 항목 체크리스트](https://mqzkim.github.io/checklists/quote-checklist/)');
+    expect(llms).toContain('- [사업자용 랜딩 문구 템플릿 체크리스트](https://mqzkim.github.io/checklists/landing-copy-checklist/)');
+    expect(llms).toContain('참고용 도구이며 세무·노무·계약·법률 판단은 전문가 확인이 필요합니다.');
   });
 });
