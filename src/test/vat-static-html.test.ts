@@ -274,6 +274,8 @@ describe('SEO discovery files', () => {
     expect(sitemap).toContain('<loc>https://mqzkim.github.io/checklists/quote-checklist/</loc>');
     expect(sitemap).toContain('<loc>https://mqzkim.github.io/checklists/landing-copy-checklist/</loc>');
     expect(sitemap).toContain('<changefreq>weekly</changefreq>');
+    expect(sitemap).toContain('<lastmod>2026-05-02</lastmod>');
+    expect((sitemap.match(/<lastmod>2026-05-02<\/lastmod>/g) ?? []).length).toBe(6);
     expect(sitemap).toContain('<priority>1.0</priority>');
 
     expect(robots).toContain('User-agent: *');

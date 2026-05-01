@@ -1,5 +1,7 @@
 const baseUrl = 'https://mqzkim.github.io';
 
+const lastModified = '2026-05-02';
+
 const routes = [
   { path: '/', priority: '1.0' },
   { path: '/tools/vat-calculator/', priority: '0.9' },
@@ -16,6 +18,7 @@ export function GET() {
     .map(
       (route) => `  <url>
     <loc>${toAbsoluteUrl(route.path)}</loc>
+    <lastmod>${lastModified}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>${route.priority}</priority>
   </url>`,
