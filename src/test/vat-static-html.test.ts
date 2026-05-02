@@ -13,6 +13,7 @@ const landingCopyHtmlPath = join(projectRoot, 'dist/checklists/landing-copy-chec
 const sitemapXmlPath = join(projectRoot, 'dist/sitemap.xml');
 const robotsTxtPath = join(projectRoot, 'dist/robots.txt');
 const llmsTxtPath = join(projectRoot, 'dist/llms.txt');
+const webManifestPath = join(projectRoot, 'dist/site.webmanifest');
 
 beforeAll(() => {
   execFileSync('npm', ['run', 'build'], {
@@ -37,6 +38,7 @@ describe('built home static HTML', () => {
     expect(html).toContain('property="og:url" content="https://mqzkim.github.io/"');
     expect(html).toContain('property="og:type" content="website"');
     expect(html).toContain('name="twitter:card" content="summary"');
+    expect(html).toContain('rel="manifest" href="/site.webmanifest"');
     expect(html).toMatch(/<h1\b[^>]*>소상공인을 위한 무료 계산기와 체크리스트<\/h1>/);
     expect(html).toContain('부가세, 마진율, 인건비처럼 자주 확인하는 숫자를 빠르게 계산하고 견적·랜딩 문구 체크리스트로 누락을 줄입니다.');
     expect(html).toContain('href="/tools/vat-calculator"');
@@ -266,6 +268,7 @@ describe('SEO discovery files', () => {
     const sitemap = readFileSync(sitemapXmlPath, 'utf8');
     const robots = readFileSync(robotsTxtPath, 'utf8');
     const llms = readFileSync(llmsTxtPath, 'utf8');
+    const webManifest = JSON.parse(readFileSync(webManifestPath, 'utf8'));
 
     expect(sitemap).toContain('<?xml version="1.0" encoding="UTF-8"?>');
     expect(sitemap).toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
@@ -293,5 +296,15 @@ describe('SEO discovery files', () => {
     expect(llms).toContain('- [견적서 항목 체크리스트](https://mqzkim.github.io/checklists/quote-checklist/)');
     expect(llms).toContain('- [사업자용 랜딩 문구 템플릿 체크리스트](https://mqzkim.github.io/checklists/landing-copy-checklist/)');
     expect(llms).toContain('참고용 도구이며 세무·노무·계약·법률 판단은 전문가 확인이 필요합니다.');
+
+    expect(webManifest.name).toBe('소상공인 무료 계산기와 체크리스트');
+    expect(webManifest.short_name).toBe('사업자 도구');
+    expect(webManifest.lang).toBe('ko-KR');
+    expect(webManifest.start_url).toBe('/');
+    expect(webManifest.scope).toBe('/');
+    expect(webManifest.display).toBe('standalone');
+    expect(webManifest.icons).toEqual([
+      { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+    ]);
   });
 });
